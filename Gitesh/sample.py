@@ -10,3 +10,7 @@ print(f"Welcome, {name}!")
 #interview question
 value = 42
 print(f"The answer is {{value}}: {value}")  
+
+user = {"name": "Alice"}
+# Valid: Outer double quotes, inner single quotes
+print(f"User is {user['name']}") 
