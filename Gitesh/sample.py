@@ -3,7 +3,7 @@ students=["harjot","daksh","gitesh"]
 print(students)
 
 result=f"Student_List:{students}"
-students.append("vishal")\
+students.append("vishal")
 # Using f-string
 name="test"
 print(f"Welcome, {name}!")
