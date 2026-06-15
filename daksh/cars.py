@@ -1,5 +1,5 @@
 cars=["swift","dzire","bmw"]
-number_plate=[2328,2,1]
+number_plate=["2328","0002","0001"]
 
 cars.append("audi")
 number_plate.append("9921")
