@@ -19,6 +19,10 @@ except ZeroDivisionError:
 except Exception as e:
     print(f"an unexpected error {e}")
 finally: 
-    print(f"code executed sucessfully")
          
+    print(f"code executed sucessfully")
+    
+    
+add(a,b)
+power(a,b)
 
