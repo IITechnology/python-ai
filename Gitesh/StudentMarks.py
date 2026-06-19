@@ -16,3 +16,4 @@ total=sum(marks)
 print(f"Total marks obtained: {total}")
 average=total/len(marks)
 print(f"Average marks obtained: {average}")
+#test
