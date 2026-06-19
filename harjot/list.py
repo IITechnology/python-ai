@@ -4,10 +4,10 @@
 
 fruits=["apple","banana","grapes"]
 #pre defined function
-#fruits.append("orange")
+fruits.extend(['orange','watermellon','pineapple'])
 print(f" fruit list: {fruits}")
-print(f"First food value is {fruits[0:1]}")
-print(f"Third food value is {fruits[2]}")
+print(f"First food value is {fruits[:1]}")
+print(f"Third food value is {fruits[-1]}")
 # tuples=once declared we cannot change the values, it is immutable, Append is not possible, we cannot delete the values, we cannot change the values
 colors=("red","blue","green")
 print(f"Color list: {colors}")
