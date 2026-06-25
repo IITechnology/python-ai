@@ -1,4 +1,4 @@
-import calculated_area
+import daksh.phase1.calculated_area as calculated_area
 
 length = 10
 width = 12
