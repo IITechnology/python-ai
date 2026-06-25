@@ -1,20 +1,19 @@
-from fastapi import FastAPI
-app=FastAPI(title="Hello World!", description="this is my new web page ",version="1.0.0")
+from fastapi import FastAPI, HTTPException, status
 
-@app.get("/")
-def read_route():
-    return{
-        "Name":"Daksh Pratap Singh",
-        "Message": "hello world"
-    }
-    
-@app.get("/calculate/{num1}")
-def calculate(num1:int,operation:str="*"):
-    for  i in range(1, 11):
+app = FastAPI(title="Welcome to exception handling")
 
-        table=[]
-        table.append(f"{num1} x {i} = {num1 * i}")
-        
-        return{"table:",table}
+ITEMS = {
+    101: "PYTHON LAB MANUAL",
+    102: "COMPUTER NETWORK NOTES",
+    103: "DBMS NOTES"
+}
 
-    
+@app.get("/items/{item_id}")
+def get_item(item_id: int):
+    if item_id not in ITEMS:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Item with ID {item_id} was not found on this server"
+        )
+
+    return {"item_id": item_id, "item": ITEMS[item_id]}
