@@ -1,19 +1,14 @@
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException
 
-app = FastAPI(title="Welcome to exception handling")
+app = FastAPI()
 
-ITEMS = {
-    101: "PYTHON LAB MANUAL",
-    102: "COMPUTER NETWORK NOTES",
-    103: "DBMS NOTES"
-}
+@app.get("/vote")
+def check_eligibility(age: int):
 
-@app.get("/items/{item_id}")
-def get_item(item_id: int):
-    if item_id not in ITEMS:
+    if age < 18:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Item with ID {item_id} was not found on this server"
+            status_code=403,
+            detail="You are not eligible to vote"
         )
 
-    return {"item_id": item_id, "item": ITEMS[item_id]}
+    return {"message": "You are eligible to vote"}
