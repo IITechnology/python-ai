@@ -1,68 +1,32 @@
-from fastapi import FastAPI, HTTPException, status
+import sqlite3
+DB_FILE="student_records.db"
+def init_db():                              #initialize the database
+    connection= sqlite3.connect(DB_FILE)
+    cursor=connection.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS STUDENTS (
+                rollnumber INTEGER PRIMARY KEY,
+                name TEXT NOT NULL,
+                marks REAL  
+                   )
+    ''')
+    connection.commit()
+    print(f"Database and Student Table is Created.")
+    connection.close()
 
-app = FastAPI(title="Day 19: Exception Handling")
+def add_student(rollnumber: int, name: str, marks: float):            #initialize the database
+    connection= sqlite3.connect(DB_FILE)
+    cursor=connection.cursor()
+    cursor.execute('''
+        INSERT INTO STUDENTS (rollnumber,name,marks) VALUES(?,?,?) 
+    ''', (rollnumber,name,marks)
+    )
+    connection.commit()
+    print(f"Student Created Successfully.")
+    connection.close()
 
-
-#CRUD Operation : Create, Read, Update, Delete 
-
-# Simulating a database
-ITEMS = {
-    101: "Python Lab Manual",
-    102: "Computer Networks Notes",
-    103: "DBMS Textbook",
-    104: "AI Notes"
-}
-
-#http get request
-@app.get("/") #annotation
-def read_route():
-    return{
-        "status":"success",
-        "result":ITEMS
-    }
-
-# 1. Raising a 404 Not Found Exception
-@app.get("/items/{item_id}")
-def get_item(item_id: int):
-    if item_id not in ITEMS:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Item with ID {item_id} was not found on this server."
-        )
-    return {"item_id": item_id, "item_name": ITEMS[item_id]}
-
-# 2. Using status_code in the decorator to send 201 Created
-@app.post("/items/{item_id}", status_code=status.HTTP_201_CREATED)
-def add_item(item_id: int, name: str):
-    if item_id in ITEMS:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Item with ID {item_id} already exists."
-        )
-    ITEMS[item_id] = name
-    return {"message": "Item added successfully", "item_id": item_id, "name": name}
-
-#3. using update(backened put)
-@app.put("/items/{item_id}")
-def update_item(item_id: int, name: str):
-    if item_id in ITEMS:
-        ITEMS[item_id] = name
-        return {"message": "Item updated successfully", "item_id": item_id, "name": name}
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Item with ID {item_id} not found."
-        )
-    
-#4. delete
-@app.delete("/items/{item_id}")
-def delete_item(item_id:int):
-    if item_id in ITEMS:
-        deleted_item =ITEMS.pop(item_id)
-        return {"message": "Item deleted successfully", "item_id": item_id}
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Item with ID {item_id} not found."
-        )
-    
+init_db()
+#add_student(1,"harjot",19.5)
+#add_student(2,"gitesh",12.3)
+#add_student(3,"daksh",14.5)
+add_student(4,"harjot",19.5)
