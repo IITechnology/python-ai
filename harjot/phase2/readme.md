@@ -22,3 +22,23 @@ this is python's native package, no complex installation needed, data is directl
 3. Execute sql query: cursor.execute("qeury")
 4. Commit transational changes: connection.commit()
 5. Close the connection: connection.close()
+
+# ##ORM ( SQLALchemy)
+-- "select * from table" // syntax error, secuirty vulenrablity and poor scale.
+## OBJECT RELATIONSHIP MODAL its automatically intract with SQL DB using pure Obeject Orientation
+
+* Instead of ** SQL TABLES ** we have to write ** Python Classes **
+* Instead of ** SQL ROW ** we have to write ** Python Objects **
+* Instead of ** Query Execute ** we have to write ** Python methods ( ` session.add() `, ` session.query() `,   ) **
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+DB_URL = "sqlite:///./school.db"
+engine = create_engine(DB_URL)
+sessionLocal = sessionmaker(autocommit=False, autoflush= False, bind=engine )
+
+
+
+
