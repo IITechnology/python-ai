@@ -30,7 +30,7 @@ def view_all_students():
     cursor.execute('SELECT * FROM STUDENTS')
     records = cursor.fetchall()
     for row in records:
-        print(f" Roll:{row[0]} | Name: {row[1]} | Marks: {row[2} ")
+        print(f" Roll:{row[0]} | Name: {row[1]} | Marks: {row[2]} ")
     connection.close()
 
 init_db()
