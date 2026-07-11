@@ -1,46 +1,25 @@
-import sqlite3
-DB_FILE="student_records.db"
-def init_db():                              #initialize the database
-    connection= sqlite3.connect(DB_FILE)
-    cursor=connection.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS STUDENTS (
-                rollnumber INTEGER PRIMARY KEY,
-                name TEXT NOT NULL,
-                marks REAL  
-                   )
-    ''')
-    connection.commit()
-    print(f"Database and Student Table is Created.")
-    connection.close()
+from fastapi import FastAPI,Depends,HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+import database, models, schema, crud
 
-def add_student(rollnumber: int, name: str, marks: float):            #initialize the database
-    connection= sqlite3.connect(DB_FILE)
-    cursor=connection.cursor()
-    cursor.execute('''
-        INSERT INTO STUDENTS (rollnumber,name,marks) VALUES(?,?,?) 
-    ''', (rollnumber,name,marks)
-    )
-    connection.commit()
-    print(f"Student Created Successfully.")
-    connection.close()
-def view_all_students():
-    connection= sqlite3.connect(DB_FILE)
-    cursor=connection.cursor()
-    cursor.execute('SELECT * FROM STUDENTS')
-    records = cursor.fetchall()
-    for row in records:
-        print(f" Roll:{row[0]} | Name: {row[1]} | Marks: {row[2]} ")
-    connection.close()
+models.Base.metadata.create_all(bind=database.engine)
+app=FastAPI(title="schoolportal")
 
-init_db()
-#add_student(1,"harjot",19.5)
-#add_student(2,"gitesh",12.3)
-#add_student(3,"daksh",14.5)
-#add_student(4,"harjot",19.5)
-view_all_students()
-    # Roll:1 | Name: harjot | Marks: 19.5
-    # Roll:2 | Name: gitesh | Marks: 12.3
-    # Roll:3 | Name: daksh | Marks: 14.5
-    # Roll:4 | Name: harjot | Marks: 19.5
+def get_db():           #common function
+    db = database.SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
+@app.get("/students",response_model=List[schema.StudentResponse])
+def get_allstudent(db:Session=Depends(get_db)):
+    return crud.get_students(db)
+
+@app.post("/students",response_model=List[schema.StudentResponse])
+def enroll_student(student:schema.StudentCreate,db:Session=Depends(get_db)):
+    db_student=crud.get_student(db,roll=student.roll)
+    if db_student:
+        raise HTTPException(status_code=400,detail="Student already registered")
+    return crud.create_students(db, student=student)

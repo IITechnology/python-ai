@@ -1,11 +1,17 @@
-from sqlalchemy import Column, Integer, String, Float #ORM Db
+from sqlalchemy import Column, Integer, String, ForeignKey, Float # type: ignore #ORM Db
 from database import Base
+from sqlalchemy.orm import relationship
 
-class StudentModel(Base):
+class Student(Base):
     __tablename__="students"
-    rollnumber=Column(Integer, primary_key=True, index=True) #keyward argument, key: primary
+    roll=Column(Integer, primary_key=True, index=True) #keyward argument, key: primary
     name=Column(String, nullable=False)
-    marks=Column(Float, nullable=True)
+    courses=relationship("Course", back_populates="student")
 
-    def __repr__(self):  #repr is a representation, which automatically to call inbuilt method and always use string format. it always return a valu and its ia string
-        return f"<Student (roll={self.rollnumber},name='{self.name}')>"/n
+class Course(Base):
+    __tablename__="courses"
+    id=Column(Integer, primary_key=True, index=True) #keyward argument, key: primary
+    title=Column(String, index=True)
+    student_roll=Column(Integer, ForeignKey("students.roll"))
+    student=relationship("Student", back_populates="courses")
+
