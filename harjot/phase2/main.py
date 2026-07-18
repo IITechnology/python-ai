@@ -23,3 +23,10 @@ def enroll_student(student:schema.StudentCreate,db:Session=Depends(get_db)):
     if db_student:
         raise HTTPException(status_code=400,detail="Student already registered")
     return crud.create_students(db, student=student)
+
+@app.post("/students/{roll}/courses",response_model=schema.CourseResponse)
+def create_course(roll:int,course:schema.CourseCreate,db:Session=Depends(get_db)):
+    db_student=crud.get_student(db,roll=roll)
+    if not db_student:
+        raise HTTPException(status_code=400,detail="Student not found")
+    return crud.add_course(db,cousre=course,roll=roll)

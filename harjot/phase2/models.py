@@ -6,7 +6,7 @@ class Student(Base):
     __tablename__="students"
     roll=Column(Integer, primary_key=True, index=True) #keyward argument, key: primary
     name=Column(String, nullable=False)
-    courses=relationship("Course", back_populates="student")
+    courses=relationship("Course", back_populates="student", lazy="joined")
 
 class Course(Base):
     __tablename__="courses"

@@ -15,3 +15,10 @@ def create_students(db:Session,student:schema.StudentCreate):
     db.commit()
     db.refresh(db_student)
     return db_student
+
+def add_course(db:Session,cousre:schema.CourseCreate,roll:int):
+    db_course=models.Course(title=cousre.title,student_roll=roll)
+    db.add(db_course)
+    db.commit()
+    db.refresh(db_course)
+    return db_course
