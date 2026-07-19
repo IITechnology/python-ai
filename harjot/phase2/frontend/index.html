@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>School Portal Dashboard</title>
+
+    <!-- Google Font -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Icons -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <!-- CSS -->
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+<body>
+
+<!-- ===============================
+BACKGROUND DECORATION
+================================ -->
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<div class="grid-bg"></div>
+
+<!-- ===============================
+MAIN
+================================ -->
+
+<div class="dashboard">
+
+    <!-- ===============================
+HEADER
+================================ -->
+
+    <header>
+
+        <div class="logo">
+
+            <div class="logoBox">
+
+                <i class="fa-solid fa-graduation-cap"></i>
+
+            </div>
+
+            <div>
+
+                <h1>School Portal</h1>
+
+                <p>
+                    Student & Course Management Dashboard
+                </p>
+
+            </div>
+
+        </div>
+
+        <button id="refreshBtn">
+
+            <i class="fa-solid fa-rotate-right"></i>
+
+            Refresh
+
+        </button>
+
+    </header>
+
+    <!-- ===============================
+TOP CARDS
+================================ -->
+
+    <section class="stats">
+
+        <div class="statCard">
+
+            <div class="icon">
+
+                <i class="fa-solid fa-user-graduate"></i>
+
+            </div>
+
+            <div>
+
+                <h3>Total Students</h3>
+
+                <span id="studentCount">
+
+                    0
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="statCard">
+
+            <div class="icon">
+
+                <i class="fa-solid fa-book"></i>
+
+            </div>
+
+            <div>
+
+                <h3>Total Courses</h3>
+
+                <span id="courseCount">
+
+                    0
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ===============================
+FORMS
+================================ -->
+
+    <section class="forms">
+
+        <!-- STUDENT -->
+
+        <div class="card">
+
+            <div class="cardTitle">
+
+                <i class="fa-solid fa-user-plus"></i>
+
+                <h2>
+
+                    Enroll Student
+
+                </h2>
+
+            </div>
+
+            <div class="inputGroup">
+
+                <label>
+
+                    Roll Number
+
+                </label>
+
+                <input
+
+                    id="roll"
+
+                    type="number"
+
+                    placeholder="Enter Roll Number">
+
+            </div>
+
+            <div class="inputGroup">
+
+                <label>
+
+                    Student Name
+
+                </label>
+
+                <input
+
+                    id="name"
+
+                    type="text"
+
+                    placeholder="Enter Student Name">
+
+            </div>
+
+            <button
+
+                id="addStudentBtn"
+
+                class="primaryBtn">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Enroll Student
+
+            </button>
+
+        </div>
+
+        <!-- COURSE -->
+
+        <div class="card">
+
+            <div class="cardTitle">
+
+                <i class="fa-solid fa-book-open"></i>
+
+                <h2>
+
+                    Assign Course
+
+                </h2>
+
+            </div>
+
+            <div class="inputGroup">
+
+                <label>
+
+                    Student Roll
+
+                </label>
+
+                <input
+
+                    id="courseRoll"
+
+                    type="number"
+
+                    placeholder="Enter Student Roll">
+
+            </div>
+
+            <div class="inputGroup">
+
+                <label>
+
+                    Course Title
+
+                </label>
+
+                <input
+
+                    id="courseTitle"
+
+                    type="text"
+
+                    placeholder="Enter Course Name">
+
+            </div>
+
+            <button
+
+                id="addCourseBtn"
+
+                class="primaryBtn">
+
+                <i class="fa-solid fa-book-medical"></i>
+
+                Assign Course
+
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- ===============================
+TABLE
+================================ -->
+
+    <section class="tableCard">
+
+        <div class="tableTop">
+
+            <div>
+
+                <h2>
+
+                    Students
+
+                </h2>
+
+                <p>
+
+                    Manage all enrolled students
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="tableWrapper">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>Student</th>
+
+                    <th>Roll</th>
+
+                    <th>Courses</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody id="studentTable">
+
+                <!-- JavaScript -->
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+<!-- ===============================
+TOAST
+================================ -->
+
+<div id="toast"
+     class="toast">
+
+    Success
+
+</div>
+
+<!-- ===============================
+LOADING
+================================ -->
+
+<div id="loader"
+     class="loader hidden">
+
+    <div class="spinner"></div>
+
+</div>
+
+<!-- ===============================
+DELETE MODAL
+================================ -->
+
+<div id="modal" class="modal hidden">
+
+    <div class="modalCard">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <h2>
+
+            Delete Student?
+
+        </h2>
+
+        <p>
+
+            This action cannot be undone.
+
+        </p>
+
+        <div class="modalButtons">
+
+            <button id="cancelDelete">
+
+                Cancel
+
+            </button>
+
+            <button id="confirmDelete">
+
+                Delete
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

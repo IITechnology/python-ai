@@ -22,3 +22,11 @@ def add_course(db:Session,cousre:schema.CourseCreate,roll:int):
     db.commit()
     db.refresh(db_course)
     return db_course
+
+def delete_student(db: Session, roll: int):
+    student = db.query(models.Student).filter(models.Student.roll == roll).first()
+    if student is None:
+        return None
+    db.delete(student)
+    db.commit()
+    return student
