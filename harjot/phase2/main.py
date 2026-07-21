@@ -1,7 +1,7 @@
-from fastapi import FastAPI,Depends,HTTPException
-from sqlalchemy.orm import Session
+from fastapi import FastAPI,Depends,HTTPException # type: ignore
+from sqlalchemy.orm import Session # type: ignore
 from typing import List
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware # type: ignore
 import database, models, schema, crud
 
 models.Base.metadata.create_all(bind=database.engine)
