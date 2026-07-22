@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>School Portal | Signup</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet"
+          href="signup.css">
+
+</head>
+
+<body>
+
+<!-- ===============================
+BACKGROUND
+================================ -->
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<div class="grid-bg"></div>
+
+<!-- ===============================
+SIGNUP CARD
+================================ -->
+
+<div class="container">
+
+    <div class="card">
+
+        <div class="logo">
+
+            <div class="logoBox">
+
+                <i class="fa-solid fa-graduation-cap"></i>
+
+            </div>
+
+            <h1>School Portal</h1>
+
+            <p>Create your account</p>
+
+        </div>
+
+        <!-- Roll -->
+
+        <div class="inputGroup">
+
+            <label>
+
+                Roll Number
+
+            </label>
+
+            <input
+                type="number"
+                id="roll"
+                placeholder="Enter Roll Number">
+
+        </div>
+
+        <!-- Password -->
+
+        <div class="inputGroup">
+
+            <label>
+
+                Password
+
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter Password">
+
+        </div>
+
+        <!-- Confirm Password -->
+
+        <div class="inputGroup">
+
+            <label>
+
+                Confirm Password
+
+            </label>
+
+            <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirm Password">
+
+        </div>
+
+        <!-- Button -->
+
+        <button
+            id="signupBtn"
+            class="primaryBtn">
+
+            <i class="fa-solid fa-user-plus"></i>
+
+            Create Account
+
+        </button>
+
+        <div class="divider">
+
+            OR
+
+        </div>
+
+        <button
+            class="secondaryBtn"
+            onclick="window.location.href='index.html'">
+
+            Continue to Dashboard
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- Toast -->
+
+<div
+    id="toast"
+    class="toast">
+
+</div>
+
+<!-- Loader -->
+
+<div
+    id="loader"
+    class="loader hidden">
+
+    <div class="spinner"></div>
+
+</div>
+
+<script src="signup.js"></script>
+
+</body>
+
+</html>

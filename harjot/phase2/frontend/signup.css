@@ -1,0 +1,622 @@
+/* ==========================================================
+   SIGNUP PAGE
+========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+:root{
+
+    --primary:#4F46E5;
+    --primary-dark:#4338CA;
+    --secondary:#7C3AED;
+    --accent:#06B6D4;
+
+    --success:#16A34A;
+    --danger:#DC2626;
+
+    --text:#111827;
+    --text-light:#6B7280;
+
+    --white:#FFFFFF;
+    --bg:#EEF4FF;
+
+    --glass:rgba(255,255,255,.65);
+    --glass-border:rgba(255,255,255,.35);
+
+    --shadow:
+    0 20px 45px rgba(15,23,42,.12);
+
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:'Poppins',sans-serif;
+    background:var(--bg);
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    overflow:hidden;
+    position:relative;
+
+}
+
+/* ==========================================================
+BACKGROUND
+========================================================== */
+
+body::before{
+
+    content:"";
+    position:fixed;
+
+    width:500px;
+    height:500px;
+
+    background:#5B5CF6;
+
+    border-radius:50%;
+
+    top:-180px;
+    left:-150px;
+
+    filter:blur(170px);
+
+    opacity:.25;
+
+    animation:blobOne 20s infinite ease-in-out;
+
+}
+
+body::after{
+
+    content:"";
+
+    position:fixed;
+
+    width:420px;
+    height:420px;
+
+    background:#8B5CF6;
+
+    border-radius:50%;
+
+    right:-140px;
+    bottom:-150px;
+
+    filter:blur(170px);
+
+    opacity:.18;
+
+    animation:blobTwo 22s infinite ease-in-out;
+
+}
+
+.blob{
+
+    position:fixed;
+    border-radius:50%;
+    filter:blur(70px);
+
+    opacity:.25;
+
+    z-index:-1;
+
+}
+
+.blob1{
+
+    width:220px;
+    height:220px;
+
+    background:#3B82F6;
+
+    top:18%;
+    left:45%;
+
+    animation:floatBlob 18s infinite;
+
+}
+
+.blob2{
+
+    width:170px;
+    height:170px;
+
+    background:#06B6D4;
+
+    right:10%;
+    top:38%;
+
+    animation:floatBlob 22s infinite reverse;
+
+}
+
+.blob3{
+
+    width:180px;
+    height:180px;
+
+    background:#8B5CF6;
+
+    bottom:5%;
+    left:18%;
+
+    animation:floatBlob 24s infinite;
+
+}
+
+.grid-bg{
+
+    position:fixed;
+    inset:0;
+
+    background-image:
+    linear-gradient(rgba(255,255,255,.2) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.2) 1px,transparent 1px);
+
+    background-size:60px 60px;
+
+    mask-image:radial-gradient(circle at center,black,transparent 90%);
+
+    opacity:.3;
+
+    z-index:-2;
+
+}
+
+/* ==========================================================
+CARD
+========================================================== */
+
+.container{
+
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+
+}
+
+.card{
+
+    width:420px;
+    max-width:100%;
+
+    padding:35px;
+
+    border-radius:25px;
+
+    background:var(--glass);
+
+    backdrop-filter:blur(18px);
+
+    border:1px solid var(--glass-border);
+
+    box-shadow:var(--shadow);
+
+    animation:fadeIn .8s ease;
+
+}
+
+/* ==========================================================
+LOGO
+========================================================== */
+
+.logo{
+
+    text-align:center;
+    margin-bottom:35px;
+
+}
+
+.logoBox{
+
+    width:80px;
+    height:80px;
+
+    border-radius:20px;
+
+    margin:auto;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:white;
+    font-size:34px;
+
+    background:linear-gradient(
+        135deg,
+        var(--primary),
+        var(--secondary)
+    );
+
+    margin-bottom:20px;
+
+}
+
+.logo h1{
+
+    font-size:30px;
+    font-weight:700;
+
+}
+
+.logo p{
+
+    color:var(--text-light);
+    margin-top:6px;
+
+}
+
+/* ==========================================================
+INPUTS
+========================================================== */
+
+.inputGroup{
+
+    margin-bottom:20px;
+
+}
+
+.inputGroup label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    color:var(--text-light);
+
+    font-size:14px;
+
+}
+
+.inputGroup input{
+
+    width:100%;
+
+    height:52px;
+
+    border-radius:14px;
+
+    border:1px solid #D6DAE6;
+
+    padding:0 18px;
+
+    font-size:15px;
+
+    font-family:'Poppins',sans-serif;
+
+    transition:.3s;
+
+}
+
+.inputGroup input:focus{
+
+    outline:none;
+
+    border-color:var(--primary);
+
+    box-shadow:0 0 0 4px rgba(79,70,229,.15);
+
+}
+
+/* ==========================================================
+BUTTONS
+========================================================== */
+
+.primaryBtn{
+
+    width:100%;
+    height:54px;
+
+    border:none;
+
+    border-radius:14px;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:15px;
+    font-weight:600;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+
+    background:linear-gradient(
+        135deg,
+        var(--primary),
+        var(--secondary)
+    );
+
+    transition:.3s;
+
+}
+
+.primaryBtn:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 18px 35px rgba(79,70,229,.28);
+
+}
+
+.secondaryBtn{
+
+    width:100%;
+    height:50px;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    background:white;
+
+    color:var(--primary);
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.secondaryBtn:hover{
+
+    background:#EEF2FF;
+
+}
+
+/* ==========================================================
+DIVIDER
+========================================================== */
+
+.divider{
+
+    margin:25px 0;
+
+    text-align:center;
+
+    color:#999;
+
+    font-size:13px;
+
+    position:relative;
+
+}
+
+.divider::before,
+.divider::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:40%;
+
+    height:1px;
+
+    background:#ddd;
+
+    top:50%;
+
+}
+
+.divider::before{
+
+    left:0;
+
+}
+
+.divider::after{
+
+    right:0;
+
+}
+
+/* ==========================================================
+TOAST
+========================================================== */
+
+.toast{
+
+    position:fixed;
+
+    top:20px;
+    right:20px;
+
+    padding:15px 20px;
+
+    border-radius:12px;
+
+    color:white;
+
+    font-weight:600;
+
+    transform:translateX(350px);
+
+    transition:.5s;
+
+    z-index:1000;
+
+}
+
+.toast.show{
+
+    transform:translateX(0);
+
+}
+
+.toast.success{
+
+    background:#16A34A;
+
+}
+
+.toast.error{
+
+    background:#DC2626;
+
+}
+
+/* ==========================================================
+LOADER
+========================================================== */
+
+.loader{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(255,255,255,.55);
+
+    backdrop-filter:blur(4px);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+}
+
+.hidden{
+
+    display:none;
+
+}
+
+.spinner{
+
+    width:60px;
+    height:60px;
+
+    border-radius:50%;
+
+    border:6px solid rgba(79,70,229,.15);
+    border-top:6px solid var(--primary);
+
+    animation:spin 1s linear infinite;
+
+}
+
+/* ==========================================================
+ANIMATIONS
+========================================================== */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+        transform:translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:translateY(0);
+
+    }
+
+}
+
+@keyframes spin{
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+@keyframes floatBlob{
+
+    0%,100%{
+
+        transform:translateY(0);
+
+    }
+
+    50%{
+
+        transform:translateY(-35px);
+
+    }
+
+}
+
+@keyframes blobOne{
+
+    0%,100%{
+
+        transform:translate(0,0);
+
+    }
+
+    50%{
+
+        transform:translate(80px,50px);
+
+    }
+
+}
+
+@keyframes blobTwo{
+
+    0%,100%{
+
+        transform:translate(0,0);
+
+    }
+
+    50%{
+
+        transform:translate(-70px,-40px);
+
+    }
+
+}
+
+/* ==========================================================
+RESPONSIVE
+========================================================== */
+
+@media(max-width:500px){
+
+    .card{
+
+        padding:25px;
+
+    }
+
+    .logo h1{
+
+        font-size:25px;
+
+    }
+
+    .logoBox{
+
+        width:70px;
+        height:70px;
+        font-size:28px;
+
+    }
+
+}

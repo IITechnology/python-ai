@@ -11,8 +11,8 @@
     <title>School Portal Dashboard</title>
 
     <!-- Google Font -->
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
 
     <link rel="preconnect"
           href="https://fonts.gstatic.com"
@@ -21,13 +21,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
 
-    <!-- Icons -->
-
+    <!-- Font Awesome -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
     <!-- CSS -->
-
     <link rel="stylesheet"
           href="style.css">
 
@@ -35,9 +33,9 @@
 
 <body>
 
-<!-- ===============================
-BACKGROUND DECORATION
-================================ -->
+<!-- =====================================
+BACKGROUND
+====================================== -->
 
 <div class="blob blob1"></div>
 <div class="blob blob2"></div>
@@ -45,15 +43,15 @@ BACKGROUND DECORATION
 
 <div class="grid-bg"></div>
 
-<!-- ===============================
-MAIN
-================================ -->
+<!-- =====================================
+MAIN DASHBOARD
+====================================== -->
 
 <div class="dashboard">
 
-    <!-- ===============================
-HEADER
-================================ -->
+    <!-- =====================================
+    HEADER
+    ====================================== -->
 
     <header>
 
@@ -70,14 +68,17 @@ HEADER
                 <h1>School Portal</h1>
 
                 <p>
+
                     Student & Course Management Dashboard
+
                 </p>
 
             </div>
 
         </div>
 
-        <button id="refreshBtn">
+        <button
+            id="refreshBtn">
 
             <i class="fa-solid fa-rotate-right"></i>
 
@@ -87,9 +88,9 @@ HEADER
 
     </header>
 
-    <!-- ===============================
-TOP CARDS
-================================ -->
+    <!-- =====================================
+    DASHBOARD CARDS
+    ====================================== -->
 
     <section class="stats">
 
@@ -103,7 +104,11 @@ TOP CARDS
 
             <div>
 
-                <h3>Total Students</h3>
+                <h3>
+
+                    Total Students
+
+                </h3>
 
                 <span id="studentCount">
 
@@ -125,7 +130,11 @@ TOP CARDS
 
             <div>
 
-                <h3>Total Courses</h3>
+                <h3>
+
+                    Total Courses
+
+                </h3>
 
                 <span id="courseCount">
 
@@ -139,13 +148,15 @@ TOP CARDS
 
     </section>
 
-    <!-- ===============================
-FORMS
-================================ -->
+    <!-- =====================================
+    FORMS
+    ====================================== -->
 
     <section class="forms">
 
-        <!-- STUDENT -->
+        <!-- ============================
+        ENROLL STUDENT
+        ============================= -->
 
         <div class="card">
 
@@ -170,11 +181,8 @@ FORMS
                 </label>
 
                 <input
-
                     id="roll"
-
                     type="number"
-
                     placeholder="Enter Roll Number">
 
             </div>
@@ -188,22 +196,17 @@ FORMS
                 </label>
 
                 <input
-
                     id="name"
-
                     type="text"
-
                     placeholder="Enter Student Name">
 
             </div>
 
             <button
-
                 id="addStudentBtn"
-
                 class="primaryBtn">
 
-                <i class="fa-solid fa-plus"></i>
+                <i class="fa-solid fa-user-plus"></i>
 
                 Enroll Student
 
@@ -211,7 +214,9 @@ FORMS
 
         </div>
 
-        <!-- COURSE -->
+        <!-- ============================
+        ASSIGN COURSE
+        ============================= -->
 
         <div class="card">
 
@@ -236,11 +241,8 @@ FORMS
                 </label>
 
                 <input
-
                     id="courseRoll"
-
                     type="number"
-
                     placeholder="Enter Student Roll">
 
             </div>
@@ -254,19 +256,14 @@ FORMS
                 </label>
 
                 <input
-
                     id="courseTitle"
-
                     type="text"
-
                     placeholder="Enter Course Name">
 
             </div>
 
             <button
-
                 id="addCourseBtn"
-
                 class="primaryBtn">
 
                 <i class="fa-solid fa-book-medical"></i>
@@ -278,10 +275,9 @@ FORMS
         </div>
 
     </section>
-
-    <!-- ===============================
-TABLE
-================================ -->
+    <!-- =====================================
+    STUDENTS TABLE
+    ====================================== -->
 
     <section class="tableCard">
 
@@ -311,23 +307,23 @@ TABLE
 
                 <thead>
 
-                <tr>
+                    <tr>
 
-                    <th>Student</th>
+                        <th>Student</th>
 
-                    <th>Roll</th>
+                        <th>Roll</th>
 
-                    <th>Courses</th>
+                        <th>Courses</th>
 
-                    <th>Action</th>
+                        <th>Action</th>
 
-                </tr>
+                    </tr>
 
                 </thead>
 
                 <tbody id="studentTable">
 
-                <!-- JavaScript -->
+                    <!-- Filled by JavaScript -->
 
                 </tbody>
 
@@ -339,33 +335,37 @@ TABLE
 
 </div>
 
-<!-- ===============================
+<!-- =====================================
 TOAST
-================================ -->
+====================================== -->
 
-<div id="toast"
-     class="toast">
+<div
+    id="toast"
+    class="toast">
 
     Success
 
 </div>
 
-<!-- ===============================
-LOADING
-================================ -->
+<!-- =====================================
+LOADER
+====================================== -->
 
-<div id="loader"
-     class="loader hidden">
+<div
+    id="loader"
+    class="loader hidden">
 
     <div class="spinner"></div>
 
 </div>
 
-<!-- ===============================
+<!-- =====================================
 DELETE MODAL
-================================ -->
+====================================== -->
 
-<div id="modal" class="modal hidden">
+<div
+    id="modal"
+    class="modal hidden">
 
     <div class="modalCard">
 
@@ -402,6 +402,26 @@ DELETE MODAL
     </div>
 
 </div>
+
+<!-- =====================================
+FOOTER
+====================================== -->
+
+<footer
+    style="
+        text-align:center;
+        padding:30px;
+        color:#6B7280;
+        font-size:14px;
+    ">
+
+    © 2026 School Portal • Student & Course Management System
+
+</footer>
+
+<!-- =====================================
+SCRIPT
+====================================== -->
 
 <script src="script.js"></script>
 
