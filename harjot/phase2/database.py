@@ -1,16 +1,28 @@
-from sqlalchemy import create_engine # type: ignore
-from sqlalchemy.ext.declarative import declarative_base # type: ignore
-from sqlalchemy.orm import sessionmaker # type: ignore
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./school.db"
+# ==========================================================
+# DATABASE CONFIGURATION
+# ==========================================================
+
+DATABASE_URL = "sqlite:///./school.db"
+
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread":False}
-    )
-SessionLocal = sessionmaker(autocommit=False, autoflush= False, bind=engine )
+    DATABASE_URL,
+    connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+Base = declarative_base()
 
-Base=declarative_base()
+# ==========================================================
+# DATABASE SESSION
+# ==========================================================
 
-def get_db():           #common function
+def get_db():
     db = SessionLocal()
     try:
         yield db

@@ -1,11 +1,12 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+
 from database import Base
 
 
-# ======================================================
-# USER (Authentication)
-# ======================================================
+# ==========================================================
+# USER
+# ==========================================================
 
 class User(Base):
 
@@ -13,36 +14,65 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    roll = Column(Integer, unique=True, index=True, nullable=False)
+    roll = Column(Integer, unique=True, nullable=False, index=True)
 
     hashed_password = Column(String, nullable=False)
 
+    student = relationship(
+        "Student",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete"
+    )
 
 
-# ======================================================
-# STUDENT (Profile)
-# ======================================================
+# ==========================================================
+# STUDENT
+# ==========================================================
 
 class Student(Base):
 
     __tablename__ = "students"
 
-    roll = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
+
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        unique=True,
+        nullable=False
+    )
+
+    roll = Column(
+        Integer,
+        unique=True,
+        nullable=False,
+        index=True
+    )
 
     name = Column(String, nullable=False)
+
+    email = Column(String, nullable=True)
+
+    branch = Column(String, nullable=True)
+
+    semester = Column(Integer, nullable=True)
+
+    user = relationship(
+        "User",
+        back_populates="student"
+    )
 
     courses = relationship(
         "Course",
         back_populates="student",
-        cascade="all, delete",
-        lazy="joined"
+        cascade="all, delete-orphan"
     )
 
 
-
-# ======================================================
+# ==========================================================
 # COURSE
-# ======================================================
+# ==========================================================
 
 class Course(Base):
 
@@ -50,11 +80,12 @@ class Course(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    title = Column(String, index=True, nullable=False)
+    title = Column(String, nullable=False)
 
-    student_roll = Column(
+    student_id = Column(
         Integer,
-        ForeignKey("students.roll", ondelete="CASCADE")
+        ForeignKey("students.id"),
+        nullable=False
     )
 
     student = relationship(

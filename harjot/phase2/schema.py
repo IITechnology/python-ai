@@ -1,10 +1,11 @@
-from pydantic import BaseModel,Field
-from typing import List
+from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict
 
 
-# ======================================================
+# ==========================================================
 # AUTHENTICATION
-# ======================================================
+# ==========================================================
 
 class SignupCreate(BaseModel):
     roll: int
@@ -15,55 +16,58 @@ class UserResponse(BaseModel):
     id: int
     roll: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
-
-# ======================================================
-# STUDENT
-# ======================================================
-
-class StudentCreate(BaseModel):
-    roll: int
-    name: str
-
-
-class CourseResponse(BaseModel):
-    id: int
-    title: str
-    student_roll: int
-
-    class Config:
-        from_attributes = True
-
-class StudentResponse(BaseModel):
-    roll: int
-    name: str
-    courses: list[CourseResponse] = []
-
-    class Config:
-        from_attributes = True
-
-
-# ======================================================
+# ==========================================================
 # COURSE
-# ======================================================
+# ==========================================================
 
 class CourseCreate(BaseModel):
     title: str
 
 
+class CourseResponse(BaseModel):
+    id: int
+    title: str
+
+    model_config = ConfigDict(from_attributes=True)
 
 
-# ======================================================
-# STUDENT WITH COURSES (for dashboard)
-# ======================================================
+# ==========================================================
+# CREATE STUDENT PROFILE
+# ==========================================================
 
-class StudentWithCourses(BaseModel):
+class StudentCreate(BaseModel):
     roll: int
     name: str
-    courses: List[CourseResponse] = Field(default_factory=list)
+    email: Optional[str] = None
+    branch: Optional[str] = None
+    semester: Optional[int] = None
 
-    class Config:
-        from_attributes = True
+
+# ==========================================================
+# UPDATE STUDENT PROFILE
+# ==========================================================
+
+class StudentUpdate(BaseModel):
+    email: Optional[str] = None
+    branch: Optional[str] = None
+    semester: Optional[int] = None
+
+
+# ==========================================================
+# STUDENT RESPONSE
+# ==========================================================
+
+class StudentResponse(BaseModel):
+    id: int
+    roll: int
+    name: str
+    email: Optional[str]
+    branch: Optional[str]
+    semester: Optional[int]
+
+    courses: List[CourseResponse] = []
+
+    model_config = ConfigDict(from_attributes=True)
