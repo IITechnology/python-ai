@@ -1,164 +1,308 @@
+# ==========================================================
+# IMPORTS
+# ==========================================================
+
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
 
 import models
 import schema
 
 
 # ==========================================================
-# PASSWORD HASHING
+# SIGNUP
 # ==========================================================
 
-pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto"
-)
-
-
-# ==========================================================
-# USER CRUD
-# ==========================================================
-
-def get_user_by_roll(
+def signup(
     db: Session,
-    roll: int
+    user: schema.UserSignup
 ):
-    return (
+
+    # --------------------------------------
+    # Check Roll Number
+    # --------------------------------------
+
+    existing_roll = (
         db.query(models.User)
-        .filter(models.User.roll == roll)
+        .filter(models.User.roll == user.roll)
         .first()
     )
 
+    if existing_roll:
 
-def create_user(
-    db: Session,
-    user: schema.SignupCreate
-):
-    hashed_password = pwd_context.hash(user.password)
+        return None
+
+    # --------------------------------------
+    # Check Email
+    # --------------------------------------
+
+    existing_email = (
+        db.query(models.User)
+        .filter(models.User.email == user.email)
+        .first()
+    )
+
+    if existing_email:
+
+        return None
+
+    # --------------------------------------
+    # Create User
+    # --------------------------------------
 
     db_user = models.User(
+
         roll=user.roll,
-        hashed_password=hashed_password
+
+        name=user.name,
+
+        email=user.email,
+
+        branch=user.branch,
+
+        semester=user.semester,
+
+        password=user.password
+
     )
 
     db.add(db_user)
+
     db.commit()
+
     db.refresh(db_user)
 
     return db_user
 
 
 # ==========================================================
-# STUDENT CRUD
+# LOGIN
+# ==========================================================
+
+def login(
+    db: Session,
+    credentials: schema.UserLogin
+):
+
+    student = (
+
+        db.query(models.User)
+
+        .filter(
+
+            models.User.roll == credentials.roll
+
+        )
+
+        .first()
+
+    )
+
+    if not student:
+
+        return None
+
+    if student.password != credentials.password:
+
+        return None
+
+    return student
+
+
+# ==========================================================
+# GET STUDENT BY ROLL
 # ==========================================================
 
 def get_student(
     db: Session,
     roll: int
 ):
+
     return (
-        db.query(models.Student)
-        .filter(models.Student.roll == roll)
+
+        db.query(models.User)
+
+        .filter(
+
+            models.User.roll == roll
+
+        )
+
         .first()
+
     )
 
+
+# ==========================================================
+# GET STUDENT BY ID
+# ==========================================================
+
+def get_student_by_id(
+    db: Session,
+    student_id: int
+):
+
+    return (
+
+        db.query(models.User)
+
+        .filter(
+
+            models.User.id == student_id
+
+        )
+
+        .first()
+
+    )
+
+
+# ==========================================================
+# GET ALL STUDENTS
+# ==========================================================
 
 def get_students(
     db: Session
 ):
-    return db.query(models.Student).all()
 
+    return (
 
-def create_student(
-    db: Session,
-    student: schema.StudentCreate
-):
-    """
-    Create profile after signup.
+        db.query(models.User)
 
-    Roll number must already exist in Users table.
-    """
+        .order_by(models.User.roll)
 
-    user = get_user_by_roll(
-        db,
-        student.roll
+        .all()
+
     )
-
-    if user is None:
-        return None
-
-    existing_student = get_student(
-        db,
-        student.roll
-    )
-
-    if existing_student:
-        return existing_student
-
-    db_student = models.Student(
-        user_id=user.id,
-        roll=student.roll,
-        name=student.name,
-        email=student.email,
-        branch=student.branch,
-        semester=student.semester
-    )
-
-    db.add(db_student)
-    db.commit()
-    db.refresh(db_student)
-
-    return db_student
-
+# ==========================================================
+# UPDATE STUDENT
+# ==========================================================
 
 def update_student(
     db: Session,
     roll: int,
-    student: schema.StudentUpdate
+    student_update: schema.StudentUpdate
 ):
-    db_student = get_student(
-        db,
-        roll
-    )
 
-    if db_student is None:
+    student = get_student(db, roll)
+
+    if not student:
+
         return None
 
-    if student.email is not None:
-        db_student.email = student.email
+    # --------------------------------------
+    # Check Duplicate Email
+    # --------------------------------------
 
-    if student.branch is not None:
-        db_student.branch = student.branch
+    if student_update.email:
 
-    if student.semester is not None:
-        db_student.semester = student.semester
+        existing_email = (
+
+            db.query(models.User)
+
+            .filter(
+                models.User.email == student_update.email,
+                models.User.roll != roll
+            )
+
+            .first()
+
+        )
+
+        if existing_email:
+
+            raise ValueError(
+                "Email already exists."
+            )
+
+    # --------------------------------------
+    # Update Fields
+    # --------------------------------------
+
+    update_data = student_update.model_dump(
+        exclude_unset=True
+    )
+
+    for key, value in update_data.items():
+
+        setattr(student, key, value)
 
     db.commit()
-    db.refresh(db_student)
 
-    return db_student
+    db.refresh(student)
 
+    return student
+
+
+# ==========================================================
+# DELETE STUDENT
+# ==========================================================
 
 def delete_student(
     db: Session,
     roll: int
 ):
-    student = get_student(
-        db,
-        roll
-    )
 
-    if student is None:
+    student = get_student(db, roll)
+
+    if not student:
+
         return None
 
     db.delete(student)
+
     db.commit()
 
     return student
 
 
 # ==========================================================
-# COURSE CRUD
+# CHECK EMAIL EXISTS
+# ==========================================================
+
+def email_exists(
+    db: Session,
+    email: str
+):
+
+    return (
+
+        db.query(models.User)
+
+        .filter(
+
+            models.User.email == email
+
+        )
+
+        .first()
+
+    )
+
+
+# ==========================================================
+# CHECK ROLL EXISTS
+# ==========================================================
+
+def roll_exists(
+    db: Session,
+    roll: int
+):
+
+    return (
+
+        db.query(models.User)
+
+        .filter(
+
+            models.User.roll == roll
+
+        )
+
+        .first()
+
+    )
+# ==========================================================
+# ADD COURSE
 # ==========================================================
 
 def add_course(
@@ -166,36 +310,160 @@ def add_course(
     roll: int,
     course: schema.CourseCreate
 ):
-    student = get_student(
-        db,
-        roll
-    )
 
-    if student is None:
+    student = get_student(db, roll)
+
+    if not student:
+
         return None
 
     db_course = models.Course(
+
         title=course.title,
+
         student_id=student.id
+
     )
 
     db.add(db_course)
+
     db.commit()
+
     db.refresh(db_course)
 
     return db_course
 
 
-def get_student_courses(
+# ==========================================================
+# GET ALL COURSES OF A STUDENT
+# ==========================================================
+
+def get_courses(
     db: Session,
     roll: int
 ):
-    student = get_student(
-        db,
-        roll
-    )
 
-    if student is None:
+    student = get_student(db, roll)
+
+    if not student:
+
         return None
 
-    return student.courses
+    return (
+
+        db.query(models.Course)
+
+        .filter(
+
+            models.Course.student_id == student.id
+
+        )
+
+        .all()
+
+    )
+
+
+# ==========================================================
+# GET COURSE BY ID
+# ==========================================================
+
+def get_course(
+    db: Session,
+    course_id: int
+):
+
+    return (
+
+        db.query(models.Course)
+
+        .filter(
+
+            models.Course.id == course_id
+
+        )
+
+        .first()
+
+    )
+
+
+# ==========================================================
+# UPDATE COURSE
+# ==========================================================
+
+def update_course(
+    db: Session,
+    course_id: int,
+    course_update: schema.CourseUpdate
+):
+
+    course = get_course(db, course_id)
+
+    if not course:
+
+        return None
+
+    course.title = course_update.title
+
+    db.commit()
+
+    db.refresh(course)
+
+    return course
+
+
+# ==========================================================
+# DELETE COURSE
+# ==========================================================
+
+def delete_course(
+    db: Session,
+    course_id: int
+):
+
+    course = get_course(db, course_id)
+
+    if not course:
+
+        return None
+
+    db.delete(course)
+
+    db.commit()
+
+    return course
+
+
+# ==========================================================
+# TOTAL STUDENTS
+# ==========================================================
+
+def total_students(
+    db: Session
+):
+
+    return (
+
+        db.query(models.User)
+
+        .count()
+
+    )
+
+
+# ==========================================================
+# TOTAL COURSES
+# ==========================================================
+
+def total_courses(
+    db: Session
+):
+
+    return (
+
+        db.query(models.Course)
+
+        .count()
+
+    )

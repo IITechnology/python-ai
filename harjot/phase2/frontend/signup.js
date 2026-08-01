@@ -1,244 +1,217 @@
-// ==========================================================
-// School Portal
+// ======================================================
+// SCHOOL PORTAL
 // signup.js
-// ==========================================================
+// ======================================================
 
 const API_URL = "http://127.0.0.1:8000";
 
-// ==========================================================
-// DOM
-// ==========================================================
 
-const rollInput = document.getElementById("roll");
-const passwordInput = document.getElementById("password");
-const confirmInput = document.getElementById("confirmPassword");
+// ======================================================
+// ELEMENTS
+// ======================================================
 
-const signupBtn = document.getElementById("signupBtn");
+const signupForm = document.getElementById("signupForm");
 
-const toast = document.getElementById("toast");
 const loader = document.getElementById("loader");
 
-// ==========================================================
-// Helpers
-// ==========================================================
+const toast = document.getElementById("toast");
 
-function showToast(message, type = "success") {
 
-    if (!toast) {
-        alert(message);
-        return;
-    }
+// ======================================================
+// TOAST
+// ======================================================
 
-    toast.innerText = message;
+function showToast(message, success = true){
 
-    toast.className = "toast";
+    toast.textContent = message;
 
-    toast.classList.add(type);
+    toast.style.display = "block";
 
-    toast.classList.add("show");
+    toast.style.background = success
+        ? "#16a34a"
+        : "#dc2626";
 
     setTimeout(() => {
 
-        toast.classList.remove("show");
+        toast.style.display = "none";
 
-    }, 3000);
-
-}
-
-function showLoader() {
-
-    if (loader)
-        loader.classList.remove("hidden");
+    },3000);
 
 }
 
-function hideLoader() {
 
-    if (loader)
-        loader.classList.add("hidden");
+// ======================================================
+// LOADER
+// ======================================================
+
+function showLoader(){
+
+    loader.classList.remove("hidden");
 
 }
 
-// ==========================================================
-// Signup
-// ==========================================================
+function hideLoader(){
 
-async function createAccount() {
+    loader.classList.add("hidden");
 
-    console.clear();
+}
 
-    console.log("Signup Started");
 
-    const roll = rollInput.value.trim();
+// ======================================================
+// CHECK LOGIN
+// ======================================================
 
-    const password = passwordInput.value.trim();
+const loggedUser = localStorage.getItem("student");
 
-    const confirm = confirmInput.value.trim();
+if(loggedUser){
 
-    // -----------------------------
-    // Validation
-    // -----------------------------
+    window.location.href = "index.html";
 
-    if (roll === "") {
+}
 
-        showToast("Enter Roll Number", "error");
+
+// ======================================================
+// SIGNUP
+// ======================================================
+
+signupForm.addEventListener("submit", async(e)=>{
+
+    e.preventDefault();
+
+    const name=document.getElementById("name").value.trim();
+
+    const roll=Number(document.getElementById("roll").value);
+
+    const email=document.getElementById("email").value.trim();
+
+    const branch=document.getElementById("branch").value;
+
+    const semester=Number(document.getElementById("semester").value);
+
+    const password=document.getElementById("password").value;
+
+    const confirmPassword=document.getElementById("confirmPassword").value;
+
+
+    // ==========================================
+    // VALIDATION
+    // ==========================================
+
+    if(
+        !name ||
+        !roll ||
+        !email ||
+        !branch ||
+        !semester ||
+        !password ||
+        !confirmPassword
+    ){
+
+        showToast("Please fill all fields.",false);
 
         return;
 
     }
 
-    if (password === "") {
 
-        showToast("Enter Password", "error");
+    if(password!==confirmPassword){
 
-        return;
-
-    }
-
-    if (confirm === "") {
-
-        showToast("Confirm Password", "error");
+        showToast("Passwords do not match.",false);
 
         return;
 
     }
 
-    if (password !== confirm) {
 
-        showToast("Passwords do not match", "error");
+    if(password.length<6){
+
+        showToast("Password must contain at least 6 characters.",false);
 
         return;
 
     }
 
-    signupBtn.disabled = true;
 
     showLoader();
 
-    try {
 
-        console.log("Sending Request...");
+    try{
 
-        const response = await fetch(`${API_URL}/signup`, {
+        const response=await fetch(`${API_URL}/signup`,{
 
-            method: "POST",
+            method:"POST",
 
-            headers: {
-
-                "Content-Type": "application/json"
-
+            headers:{
+                "Content-Type":"application/json"
             },
 
-            body: JSON.stringify({
+            body:JSON.stringify({
 
-                roll: Number(roll),
+                roll,
 
-                password: password
+                name,
+
+                email,
+
+                branch,
+
+                semester,
+
+                password
 
             })
 
         });
 
-        const data = await response.json();
 
-        console.log(data);
-
-        if (!response.ok) {
-
-            throw new Error(data.detail || "Signup Failed");
-
-        }
-
-        // -----------------------------
-        // Save Login
-        // -----------------------------
-
-        localStorage.setItem(
-
-            "user_id",
-
-            data.id
-
-        );
-
-        localStorage.setItem(
-
-            "roll",
-
-            data.roll
-
-        );
-
-        localStorage.setItem(
-
-            "currentUser",
-
-            JSON.stringify(data)
-
-        );
-
-        showToast("Account Created Successfully");
-
-        console.log("Redirecting...");
-
-        setTimeout(() => {
-
-            window.location.href = "index.html";
-
-        }, 1200);
-
-    }
-
-    catch (err) {
-
-        console.error(err);
-
-        showToast(err.message, "error");
-
-    }
-
-    finally {
-
-        signupBtn.disabled = false;
+        const data=await response.json();
 
         hideLoader();
 
-    }
 
-}
+        if(!response.ok){
 
-// ==========================================================
-// Events
-// ==========================================================
+            showToast(data.detail || "Registration failed.",false);
 
-signupBtn.addEventListener(
-
-    "click",
-
-    function (e) {
-
-        e.preventDefault();
-
-        createAccount();
-
-    }
-
-);
-
-document.addEventListener(
-
-    "keydown",
-
-    function (e) {
-
-        if (e.key === "Enter") {
-
-            createAccount();
+            return;
 
         }
 
+
+        // ======================================
+        // AUTO LOGIN
+        // ======================================
+
+        localStorage.setItem(
+
+            "student",
+
+            JSON.stringify(data.student)
+
+        );
+
+
+        showToast("Account Created Successfully!");
+
+
+
+        setTimeout(()=>{
+
+            window.location.href="index.html";
+
+        },1200);
+
+
     }
 
-);
+    catch(error){
 
-console.log("signup.js Loaded Successfully");
+        hideLoader();
+
+        console.error(error);
+
+        showToast("Backend server is not running.",false);
+
+    }
+
+});

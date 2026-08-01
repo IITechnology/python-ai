@@ -1,135 +1,253 @@
-// ==========================================================
-// School Portal Dashboard
-// script.js
-// PART 1 OF 3
-// ==========================================================
+// ======================================================
+// SCHOOL PORTAL
+// SCRIPT.JS
+// PART 1
+// Configuration • DOM • Authentication • Helpers • API
+// ======================================================
 
-// ==========================================================
+// ======================================================
 // CONFIGURATION
-// ==========================================================
+// ======================================================
 
 const API_URL = "http://127.0.0.1:8000";
 
-// ==========================================================
-// AUTHENTICATION
-// ==========================================================
-
-// Signup saves:
-// localStorage.setItem("user_id", data.id);
-// localStorage.setItem("roll", data.roll);
-
-const userId = localStorage.getItem("user_id");
-
-if (!userId) {
-    window.location.replace("signup.html");
-}
-
-// ==========================================================
+// ======================================================
 // DOM ELEMENTS
-// ==========================================================
+// ======================================================
 
-const rollInput = document.getElementById("roll");
-const nameInput = document.getElementById("name");
+// Header
 
-const courseRollInput = document.getElementById("courseRoll");
-const courseTitleInput = document.getElementById("courseTitle");
+const logoutBtn = document.getElementById("logoutBtn");
 
-const addStudentBtn = document.getElementById("addStudentBtn");
-const addCourseBtn = document.getElementById("addCourseBtn");
-const refreshBtn = document.getElementById("refreshBtn");
+// Welcome
 
-const studentTable = document.getElementById("studentTable");
+const studentName = document.getElementById("studentName");
+
+// Dashboard
 
 const studentCount = document.getElementById("studentCount");
 const courseCount = document.getElementById("courseCount");
 
-const toast = document.getElementById("toast");
+// Course
+
+const courseForm = document.getElementById("courseForm");
+const courseRoll = document.getElementById("courseRoll");
+const courseInput = document.getElementById("course");
+
+// Table
+
+const studentTableBody = document.getElementById("studentTableBody");
+const refreshBtn = document.getElementById("refreshBtn");
+const emptyState = document.getElementById("emptyState");
+
+// Modal
+
+const editModal = document.getElementById("editModal");
+const updateForm = document.getElementById("updateForm");
+
+const updateRoll = document.getElementById("updateRoll");
+const updateName = document.getElementById("updateName");
+const updateEmail = document.getElementById("updateEmail");
+const updateBranch = document.getElementById("updateBranch");
+const updateSemester = document.getElementById("updateSemester");
+
+const closeModal = document.getElementById("closeModal");
+const cancelBtn = document.getElementById("cancelBtn");
+
+// Utilities
+
 const loader = document.getElementById("loader");
+const toast = document.getElementById("toast");
 
-const modal = document.getElementById("modal");
-const confirmDeleteBtn = document.getElementById("confirmDelete");
-const cancelDeleteBtn = document.getElementById("cancelDelete");
+// ======================================================
+// GLOBAL STATE
+// ======================================================
 
-// ==========================================================
-// GLOBAL VARIABLES
-// ==========================================================
+let students = [];
+let currentStudent = null;
+let editingRoll = null;
 
-let deleteRoll = null;
+// ======================================================
+// AUTHENTICATION
+// ======================================================
 
-// ==========================================================
-// TOAST
-// ==========================================================
+function checkAuthentication() {
 
-function showToast(message, type = "success") {
+    const stored = localStorage.getItem("student");
 
-    if (!toast) {
-        alert(message);
-        return;
+    if (!stored) {
+
+        window.location.href = "login.html";
+        return false;
+
     }
 
-    toast.textContent = message;
+    try {
 
-    toast.className = "toast";
+        currentStudent = JSON.parse(stored);
 
-    toast.classList.add(type);
+    }
 
-    toast.classList.add("show");
+    catch (error) {
 
-    setTimeout(() => {
+        console.error(error);
 
-        toast.classList.remove("show");
+        localStorage.removeItem("student");
 
-    }, 3000);
+        window.location.href = "login.html";
+
+        return false;
+
+    }
+
+    return true;
 
 }
 
-// ==========================================================
+// ======================================================
+// INITIALIZE CURRENT USER
+// ======================================================
+
+function initializeCurrentStudent() {
+
+    if (!currentStudent) {
+
+        return;
+
+    }
+
+    studentName.textContent = currentStudent.name;
+
+    courseRoll.value = currentStudent.roll;
+
+}
+
+// ======================================================
+// LOGOUT
+// ======================================================
+
+function logout() {
+
+    localStorage.removeItem("student");
+
+    window.location.href = "login.html";
+
+}
+
+// ======================================================
 // LOADER
-// ==========================================================
+// ======================================================
 
 function showLoader() {
 
-    if (loader) {
-
-        loader.classList.remove("hidden");
-
-    }
+    loader.classList.remove("hidden");
 
 }
 
 function hideLoader() {
 
-    if (loader) {
-
-        loader.classList.add("hidden");
-
-    }
+    loader.classList.add("hidden");
 
 }
 
-// ==========================================================
-// API REQUEST HELPER
-// ==========================================================
+// ======================================================
+// TOAST
+// ======================================================
 
-async function apiRequest(endpoint, options = {}) {
+function showToast(message, success = true) {
 
-    const response = await fetch(API_URL + endpoint, options);
+    toast.textContent = message;
 
-    let data = {};
+    toast.style.background =
+        success
+            ? "#16a34a"
+            : "#dc2626";
 
-    try {
+    toast.classList.remove("hidden");
 
-        data = await response.json();
+    setTimeout(() => {
 
-    } catch (e) {
+        toast.classList.add("hidden");
 
-        data = {};
+    }, 2500);
 
-    }
+}
+
+// ======================================================
+// MODAL
+// ======================================================
+
+function openModal() {
+
+    editModal.classList.remove("hidden");
+
+}
+
+function closeEditModal() {
+
+    editModal.classList.add("hidden");
+
+    updateForm.reset();
+
+    editingRoll = null;
+
+}
+
+// ======================================================
+// API
+// GET STUDENTS
+// ======================================================
+
+async function fetchStudents() {
+
+    const response = await fetch(`${API_URL}/students`);
 
     if (!response.ok) {
 
-        throw new Error(data.detail || "Request Failed");
+        throw new Error("Unable to load students.");
+
+    }
+
+    return await response.json();
+
+}
+
+// ======================================================
+// API
+// ADD COURSE
+// ======================================================
+
+async function apiAddCourse(roll, title) {
+
+    const response = await fetch(
+
+        `${API_URL}/students/${roll}/courses`,
+
+        {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type": "application/json"
+
+            },
+
+            body: JSON.stringify({
+
+                title
+
+            })
+
+        }
+
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+
+        throw new Error(data.detail);
 
     }
 
@@ -137,37 +255,79 @@ async function apiRequest(endpoint, options = {}) {
 
 }
 
-// ==========================================================
-// DELETE MODAL
-// ==========================================================
+// ======================================================
+// API
+// UPDATE STUDENT
+// ======================================================
 
-function openDeleteModal(roll) {
+async function apiUpdateStudent(roll, payload) {
 
-    deleteRoll = roll;
+    const response = await fetch(
 
-    if (modal) {
+        `${API_URL}/students/${roll}`,
 
-        modal.classList.remove("hidden");
+        {
+
+            method: "PUT",
+
+            headers: {
+
+                "Content-Type": "application/json"
+
+            },
+
+            body: JSON.stringify(payload)
+
+        }
+
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+
+        throw new Error(data.detail);
 
     }
 
+    return data;
+
 }
 
-function closeDeleteModal() {
+// ======================================================
+// API
+// DELETE STUDENT
+// ======================================================
 
-    deleteRoll = null;
+async function apiDeleteStudent(roll) {
 
-    if (modal) {
+    const response = await fetch(
 
-        modal.classList.add("hidden");
+        `${API_URL}/students/${roll}`,
+
+        {
+
+            method: "DELETE"
+
+        }
+
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+
+        throw new Error(data.detail);
 
     }
 
+    return data;
+
 }
 
-// ==========================================================
-// DASHBOARD LOADER
-// ==========================================================
+// ======================================================
+// LOAD STUDENTS
+// ======================================================
 
 async function loadStudents() {
 
@@ -175,19 +335,15 @@ async function loadStudents() {
 
     try {
 
-        const students = await apiRequest("/students");
-
-        renderStudents(students);
-
-        updateDashboard(students);
+        students = await fetchStudents();
 
     }
 
-    catch (err) {
+    catch (error) {
 
-        console.error(err);
+        console.error(error);
 
-        showToast(err.message, "error");
+        showToast(error.message, false);
 
     }
 
@@ -198,446 +354,106 @@ async function loadStudents() {
     }
 
 }
-
-// ==========================================================
-// PART 2 STARTS FROM addStudent()
-// ==========================================================
-// ==========================================================
-// School Portal Dashboard
-// script.js
-// PART 2 OF 3
-// ==========================================================
-
-// ==========================================================
-// ADD STUDENT
-// ==========================================================
-
-async function addStudent() {
-
-    const roll = Number(rollInput.value);
-
-    const name = nameInput.value.trim();
-
-    if (!roll || name === "") {
-
-        showToast("Please enter Roll Number and Student Name.", "error");
-
-        return;
-
-    }
-
-    showLoader();
-
-    addStudentBtn.disabled = true;
-
-    try {
-
-        await apiRequest("/students", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-
-                roll: roll,
-
-                name: name
-
-            })
-
-        });
-
-        showToast("Student enrolled successfully.");
-
-        rollInput.value = "";
-
-        nameInput.value = "";
-
-        await loadStudents();
-
-    }
-
-    catch (err) {
-
-        console.error(err);
-
-        showToast(err.message, "error");
-
-    }
-
-    finally {
-
-        hideLoader();
-
-        addStudentBtn.disabled = false;
-
-    }
-
-}
-
-
-// ==========================================================
-// ADD COURSE
-// ==========================================================
-
-async function addCourse() {
-
-    const roll = Number(courseRollInput.value);
-
-    const title = courseTitleInput.value.trim();
-
-    if (!roll || title === "") {
-
-        showToast("Please enter Roll Number and Course Title.", "error");
-
-        return;
-
-    }
-
-    showLoader();
-
-    addCourseBtn.disabled = true;
-
-    try {
-
-        await apiRequest(`/students/${roll}/courses`, {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-
-                title: title
-
-            })
-
-        });
-
-        showToast("Course assigned successfully.");
-
-        courseRollInput.value = "";
-
-        courseTitleInput.value = "";
-
-        await loadStudents();
-
-    }
-
-    catch (err) {
-
-        console.error(err);
-
-        showToast(err.message, "error");
-
-    }
-
-    finally {
-
-        hideLoader();
-
-        addCourseBtn.disabled = false;
-
-    }
-
-}
-
-
-// ==========================================================
-// DELETE STUDENT
-// ==========================================================
-
-async function deleteStudent() {
-
-    if (deleteRoll === null) {
-
-        return;
-
-    }
-
-    showLoader();
-
-    try {
-
-        const result = await apiRequest(`/students/${deleteRoll}`, {
-
-            method: "DELETE"
-
-        });
-
-        showToast(result.message);
-
-        closeDeleteModal();
-
-        await loadStudents();
-
-    }
-
-    catch (err) {
-
-        console.error(err);
-
-        showToast(err.message, "error");
-
-    }
-
-    finally {
-
-        hideLoader();
-
-    }
-
-}
-
-
-// ==========================================================
-// REFRESH DASHBOARD
-// ==========================================================
-
-async function refreshDashboard() {
-
-    await loadStudents();
-
-    showToast("Dashboard refreshed.");
-
-}
-
-
-// ==========================================================
-// MODAL EVENTS
-// ==========================================================
-
-if (confirmDeleteBtn) {
-
-    confirmDeleteBtn.addEventListener(
-
-        "click",
-
-        deleteStudent
-
-    );
-
-}
-
-if (cancelDeleteBtn) {
-
-    cancelDeleteBtn.addEventListener(
-
-        "click",
-
-        closeDeleteModal
-
-    );
-
-}
-
-if (modal) {
-
-    modal.addEventListener(
-
-        "click",
-
-        function (e) {
-
-            if (e.target === modal) {
-
-                closeDeleteModal();
-
-            }
-
-        }
-
-    );
-
-}
-
-
-// ==========================================================
-// BUTTON EVENTS
-// ==========================================================
-
-if (addStudentBtn) {
-
-    addStudentBtn.addEventListener(
-
-        "click",
-
-        addStudent
-
-    );
-
-}
-
-if (addCourseBtn) {
-
-    addCourseBtn.addEventListener(
-
-        "click",
-
-        addCourse
-
-    );
-
-}
-
-if (refreshBtn) {
-
-    refreshBtn.addEventListener(
-
-        "click",
-
-        refreshDashboard
-
-    );
-
-}
-
-
-// ==========================================================
-// ENTER KEY SUPPORT
-// ==========================================================
-
-if (nameInput) {
-
-    nameInput.addEventListener(
-
-        "keydown",
-
-        function (e) {
-
-            if (e.key === "Enter") {
-
-                addStudent();
-
-            }
-
-        }
-
-    );
-
-}
-
-if (courseTitleInput) {
-
-    courseTitleInput.addEventListener(
-
-        "keydown",
-
-        function (e) {
-
-            if (e.key === "Enter") {
-
-                addCourse();
-
-            }
-
-        }
-
-    );
-
-}
-
-// ==========================================================
-// PART 3 STARTS WITH renderStudents()
-// ==========================================================
 // ======================================================
-// School Portal Dashboard
-// script.js
-// PART 3 / 3
+// SCHOOL PORTAL
+// SCRIPT.JS
+// PART 2
+// Rendering • Dashboard • CRUD
 // ======================================================
 
 // ======================================================
-// RENDER STUDENTS TABLE
+// COURSE BADGES
 // ======================================================
 
-function renderStudents(students) {
+function renderCourses(courses) {
 
-    if (!studentTable) return;
+    if (!courses || courses.length === 0) {
 
-    studentTable.innerHTML = "";
+        return `<span class="noCourse">No Courses</span>`;
+
+    }
+
+    return courses.map(course =>
+
+        `<span class="course">${course.title}</span>`
+
+    ).join("");
+
+}
+
+// ======================================================
+// DASHBOARD CARDS
+// ======================================================
+
+function renderDashboardCards() {
+
+    studentCount.textContent = students.length;
+
+    let totalCourses = 0;
+
+    students.forEach(student => {
+
+        totalCourses += student.courses.length;
+
+    });
+
+    courseCount.textContent = totalCourses;
+
+}
+
+// ======================================================
+// STUDENT TABLE
+// ======================================================
+
+function renderStudentTable() {
+
+    studentTableBody.innerHTML = "";
 
     if (students.length === 0) {
 
-        studentTable.innerHTML = `
-            <tr>
-                <td colspan="4">
-                    <div class="emptyState">
-
-                        <div class="emptyIcon">
-                            📚
-                        </div>
-
-                        <h3>No Students Found</h3>
-
-                        <p>Add your first student.</p>
-
-                    </div>
-                </td>
-            </tr>
-        `;
+        emptyState.classList.remove("hidden");
 
         return;
 
     }
 
-    let html = "";
+    emptyState.classList.add("hidden");
 
-    students.forEach((student, index) => {
+    students.forEach(student => {
 
-        const courses = student.courses
-            .map(course => course.title)
-            .join(", ");
+        studentTableBody.innerHTML += `
 
-        html += `
+        <tr>
 
-        <tr
-            class="fadeRow"
-            style="animation-delay:${index * 0.08}s">
+            <td>${student.id}</td>
 
-            <td>
+            <td>${student.roll}</td>
 
-                <div class="studentInfo">
+            <td>${student.name}</td>
 
-                    <div class="avatar">
+            <td>${student.email}</td>
 
-                        ${student.name.charAt(0).toUpperCase()}
+            <td>${student.branch}</td>
 
-                    </div>
+            <td>${student.semester}</td>
 
-                    <span>
-
-                        ${student.name}
-
-                    </span>
-
-                </div>
-
-            </td>
-
-            <td>
-
-                ${student.roll}
-
-            </td>
-
-            <td>
-
-                ${courses || "<span class='courseEmpty'>No Courses</span>"}
-
-            </td>
+            <td>${renderCourses(student.courses)}</td>
 
             <td>
 
                 <button
-                    class="deleteBtn"
-                    onclick="openDeleteModal(${student.roll})">
+                    class="editBtn"
+                    onclick="openEditModal(${student.roll})">
 
-                    🗑 Delete
+                    Edit
+
+                </button>
+
+                <button
+                    class="deleteBtn"
+                    onclick="deleteStudent(${student.roll})">
+
+                    Delete
 
                 </button>
 
@@ -649,172 +465,480 @@ function renderStudents(students) {
 
     });
 
-    studentTable.innerHTML = html;
+}
+
+// ======================================================
+// RENDER COMPLETE DASHBOARD
+// ======================================================
+
+function renderDashboard() {
+
+    renderDashboardCards();
+
+    renderStudentTable();
 
 }
 
+// ======================================================
+// REFRESH DASHBOARD
+// ======================================================
+
+async function refreshDashboard() {
+
+    await loadStudents();
+
+    renderDashboard();
+
+}
 
 // ======================================================
-// UPDATE DASHBOARD
+// ADD COURSE
 // ======================================================
 
-function updateDashboard(students) {
+async function handleAddCourse(event) {
 
-    if (studentCount) {
+    event.preventDefault();
 
-        studentCount.textContent = students.length;
+    const title = courseInput.value.trim();
+
+    if (!title) {
+
+        showToast(
+
+            "Please enter course title.",
+
+            false
+
+        );
+
+        return;
 
     }
 
-    let totalCourses = 0;
+    try {
 
-    students.forEach(student => {
+        showLoader();
 
-        totalCourses += student.courses.length;
+        await apiAddCourse(
 
-    });
+            currentStudent.roll,
 
-    if (courseCount) {
+            title
 
-        courseCount.textContent = totalCourses;
+        );
+
+        courseInput.value = "";
+
+        await refreshDashboard();
+
+        showToast(
+
+            "Course added successfully."
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showToast(
+
+            error.message,
+
+            false
+
+        );
+
+    }
+
+    finally {
+
+        hideLoader();
 
     }
 
 }
 
+// ======================================================
+// OPEN EDIT MODAL
+// ======================================================
+
+function openEditModal(roll) {
+
+    const student = students.find(
+
+        s => s.roll === roll
+
+    );
+
+    if (!student) {
+
+        return;
+
+    }
+
+    editingRoll = roll;
+
+    updateRoll.value = student.roll;
+
+    updateName.value = student.name;
+
+    updateEmail.value = student.email;
+
+    updateBranch.value = student.branch;
+
+    updateSemester.value = student.semester;
+
+    openModal();
+
+}
 
 // ======================================================
-// EVENTS
+// UPDATE STUDENT
 // ======================================================
 
-if (addStudentBtn) {
+async function handleUpdateStudent(event) {
 
-    addStudentBtn.addEventListener(
+    event.preventDefault();
 
-        "click",
+    const payload = {
 
-        addStudent
+        name: updateName.value.trim(),
 
-    );
+        email: updateEmail.value.trim(),
 
-}
+        branch: updateBranch.value,
 
-if (addCourseBtn) {
+        semester: Number(updateSemester.value)
 
-    addCourseBtn.addEventListener(
+    };
 
-        "click",
+    try {
 
-        addCourse
+        showLoader();
 
-    );
+        await apiUpdateStudent(
 
-}
+            editingRoll,
 
-if (refreshBtn) {
+            payload
 
-    refreshBtn.addEventListener(
+        );
 
-        "click",
+        if (
 
-        refreshDashboard
+            editingRoll ===
 
-    );
+            currentStudent.roll
 
-}
+        ) {
 
-if (confirmDeleteBtn) {
+            currentStudent = {
 
-    confirmDeleteBtn.addEventListener(
+                ...currentStudent,
 
-        "click",
+                ...payload
 
-        () => deleteStudent()
+            };
 
-    );
+            localStorage.setItem(
 
-}
+                "student",
 
-if (cancelDeleteBtn) {
+                JSON.stringify(currentStudent)
 
-    cancelDeleteBtn.addEventListener(
+            );
 
-        "click",
-
-        closeDeleteModal
-
-    );
-
-}
-
-if (modal) {
-
-    modal.addEventListener(
-
-        "click",
-
-        (e) => {
-
-            if (e.target === modal) {
-
-                closeDeleteModal();
-
-            }
+            initializeCurrentStudent();
 
         }
 
-    );
+        closeEditModal();
+
+        await refreshDashboard();
+
+        showToast(
+
+            "Student updated successfully."
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showToast(
+
+            error.message,
+
+            false
+
+        );
+
+    }
+
+    finally {
+
+        hideLoader();
+
+    }
 
 }
 
-
 // ======================================================
-// ENTER KEY SUPPORT
+// DELETE STUDENT
 // ======================================================
 
-if (nameInput) {
+async function deleteStudent(roll) {
 
-    nameInput.addEventListener(
+    const confirmed = confirm(
 
-        "keydown",
+        "Delete this student?"
 
-        function (e) {
+    );
 
-            if (e.key === "Enter") {
+    if (!confirmed) {
 
-                addStudent();
+        return;
 
-            }
+    }
+
+    try {
+
+        showLoader();
+
+        await apiDeleteStudent(roll);
+
+        if (
+
+            roll === currentStudent.roll
+
+        ) {
+
+            logout();
+
+            return;
 
         }
 
-    );
+        await refreshDashboard();
+
+        showToast(
+
+            "Student deleted."
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showToast(
+
+            error.message,
+
+            false
+
+        );
+
+    }
+
+    finally {
+
+        hideLoader();
+
+    }
 
 }
+// ======================================================
+// SCHOOL PORTAL
+// SCRIPT.JS
+// PART 3
+// Events • Initialization • Start Application
+// ======================================================
 
-if (courseTitleInput) {
+// ======================================================
+// COURSE FORM
+// ======================================================
 
-    courseTitleInput.addEventListener(
+courseForm.addEventListener(
 
-        "keydown",
+    "submit",
 
-        function (e) {
+    handleAddCourse
 
-            if (e.key === "Enter") {
+);
 
-                addCourse();
+// ======================================================
+// UPDATE FORM
+// ======================================================
 
-            }
+updateForm.addEventListener(
+
+    "submit",
+
+    handleUpdateStudent
+
+);
+
+// ======================================================
+// REFRESH BUTTON
+// ======================================================
+
+refreshBtn.addEventListener(
+
+    "click",
+
+    async () => {
+
+        try {
+
+            await refreshDashboard();
+
+            showToast(
+
+                "Dashboard refreshed."
+
+            );
 
         }
 
-    );
+        catch (error) {
+
+            console.error(error);
+
+            showToast(
+
+                "Unable to refresh dashboard.",
+
+                false
+
+            );
+
+        }
+
+    }
+
+);
+
+// ======================================================
+// LOGOUT
+// ======================================================
+
+logoutBtn.addEventListener(
+
+    "click",
+
+    () => {
+
+        const confirmLogout = confirm(
+
+            "Do you want to logout?"
+
+        );
+
+        if (!confirmLogout) {
+
+            return;
+
+        }
+
+        logout();
+
+    }
+
+);
+
+// ======================================================
+// MODAL EVENTS
+// ======================================================
+
+closeModal.addEventListener(
+
+    "click",
+
+    closeEditModal
+
+);
+
+cancelBtn.addEventListener(
+
+    "click",
+
+    closeEditModal
+
+);
+
+window.addEventListener(
+
+    "click",
+
+    event => {
+
+        if (
+
+            event.target === editModal
+
+        ) {
+
+            closeEditModal();
+
+        }
+
+    }
+
+);
+
+window.addEventListener(
+
+    "keydown",
+
+    event => {
+
+        if (
+
+            event.key === "Escape" &&
+
+            !editModal.classList.contains("hidden")
+
+        ) {
+
+            closeEditModal();
+
+        }
+
+    }
+
+);
+
+// ======================================================
+// INITIALIZE APPLICATION
+// ======================================================
+
+async function initializeApp() {
+
+    const authenticated = checkAuthentication();
+
+    if (!authenticated) {
+
+        return;
+
+    }
+
+    initializeCurrentStudent();
+
+    await refreshDashboard();
 
 }
 
-
 // ======================================================
-// PAGE LOAD
+// START APPLICATION
 // ======================================================
 
 document.addEventListener(
@@ -823,27 +947,43 @@ document.addEventListener(
 
     async () => {
 
-        const currentUser = JSON.parse(
+        try {
 
-            localStorage.getItem("currentUser")
+            showLoader();
 
-        );
-
-        if (!currentUser) {
-
-            window.location.replace("signup.html");
-
-            return;
+            await initializeApp();
 
         }
 
-        await loadStudents();
+        catch (error) {
+
+            console.error(error);
+
+            showToast(
+
+                "Unable to load dashboard.",
+
+                false
+
+            );
+
+        }
+
+        finally {
+
+            hideLoader();
+
+        }
 
     }
 
 );
 
+// ======================================================
+// DEBUG
+// ======================================================
 
-// ======================================================
-// END OF FILE
-// ======================================================
+console.log("====================================");
+console.log("School Portal Dashboard Started");
+console.log("API :", API_URL);
+console.log("====================================");

@@ -8,9 +8,10 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>School Portal | Signup</title>
+    <title>School Portal | Student Registration</title>
 
     <!-- Google Font -->
+
     <link rel="preconnect"
           href="https://fonts.googleapis.com">
 
@@ -22,10 +23,12 @@
           rel="stylesheet">
 
     <!-- Font Awesome -->
+
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
     <!-- CSS -->
+
     <link rel="stylesheet"
           href="signup.css">
 
@@ -33,9 +36,9 @@
 
 <body>
 
-<!-- ===============================
+<!-- ==========================
 BACKGROUND
-================================ -->
+========================== -->
 
 <div class="blob blob1"></div>
 <div class="blob blob2"></div>
@@ -43,9 +46,10 @@ BACKGROUND
 
 <div class="grid-bg"></div>
 
-<!-- ===============================
+
+<!-- ==========================
 SIGNUP CARD
-================================ -->
+========================== -->
 
 <div class="container">
 
@@ -61,84 +65,187 @@ SIGNUP CARD
 
             <h1>School Portal</h1>
 
-            <p>Create your account</p>
+            <p>Create your Student Account</p>
 
         </div>
 
-        <!-- Roll -->
+        <form id="signupForm">
 
-        <div class="inputGroup">
+            <!-- Name -->
 
-            <label>
+            <div class="inputGroup">
 
-                Roll Number
+                <label>
 
-            </label>
+                    Full Name
 
-            <input
-                type="number"
-                id="roll"
-                placeholder="Enter Roll Number">
+                </label>
 
-        </div>
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter Full Name"
+                    required>
 
-        <!-- Password -->
+            </div>
 
-        <div class="inputGroup">
+            <!-- Roll -->
 
-            <label>
+            <div class="inputGroup">
 
-                Password
+                <label>
 
-            </label>
+                    Roll Number
 
-            <input
-                type="password"
-                id="password"
-                placeholder="Enter Password">
+                </label>
 
-        </div>
+                <input
+                    type="number"
+                    id="roll"
+                    placeholder="Enter Roll Number"
+                    required>
 
-        <!-- Confirm Password -->
+            </div>
 
-        <div class="inputGroup">
+            <!-- Email -->
 
-            <label>
+            <div class="inputGroup">
 
-                Confirm Password
+                <label>
 
-            </label>
+                    College Email
 
-            <input
-                type="password"
-                id="confirmPassword"
-                placeholder="Confirm Password">
+                </label>
 
-        </div>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="example@college.edu"
+                    required>
 
-        <!-- Button -->
+            </div>
 
-        <button
-            id="signupBtn"
-            class="primaryBtn">
+            <!-- Branch -->
 
-            <i class="fa-solid fa-user-plus"></i>
+            <div class="inputGroup">
 
-            Create Account
+                <label>
 
-        </button>
+                    Branch
+
+                </label>
+
+                <select id="branch" required>
+
+                    <option value="">Select Branch</option>
+
+                    <option>CSE</option>
+
+                    <option>IT</option>
+
+                    <option>ECE</option>
+
+                    <option>EEE</option>
+
+                    <option>Mechanical</option>
+
+                    <option>Civil</option>
+
+                </select>
+
+            </div>
+
+            <!-- Semester -->
+
+            <div class="inputGroup">
+
+                <label>
+
+                    Semester
+
+                </label>
+
+                <select id="semester" required>
+
+                    <option value="">Select Semester</option>
+
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+
+                </select>
+
+            </div>
+
+            <!-- Password -->
+
+            <div class="inputGroup">
+
+                <label>
+
+                    Password
+
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Create Password"
+                    required>
+
+            </div>
+
+            <!-- Confirm Password -->
+
+            <div class="inputGroup">
+
+                <label>
+
+                    Confirm Password
+
+                </label>
+
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="Confirm Password"
+                    required>
+
+            </div>
+
+            <!-- Signup -->
+
+            <button
+                type="submit"
+                class="primaryBtn"
+                id="signupBtn">
+
+                <i class="fa-solid fa-user-plus"></i>
+
+                Create Account
+
+            </button>
+
+        </form>
 
         <div class="divider">
 
-            OR
+            Already have an account?
 
         </div>
 
         <button
             class="secondaryBtn"
-            onclick="window.location.href='index.html'">
+            onclick="window.location.href='login.html'">
 
-            Continue to Dashboard
+            <i class="fa-solid fa-right-to-bracket"></i>
+
+            Login
 
         </button>
 
@@ -146,7 +253,10 @@ SIGNUP CARD
 
 </div>
 
-<!-- Toast -->
+
+<!-- ==========================
+TOAST
+========================== -->
 
 <div
     id="toast"
@@ -154,7 +264,10 @@ SIGNUP CARD
 
 </div>
 
-<!-- Loader -->
+
+<!-- ==========================
+LOADER
+========================== -->
 
 <div
     id="loader"
@@ -163,6 +276,7 @@ SIGNUP CARD
     <div class="spinner"></div>
 
 </div>
+
 
 <script src="signup.js"></script>
 

@@ -5,7 +5,7 @@ from database import Base
 
 
 # ==========================================================
-# USER
+# USER MODEL
 # ==========================================================
 
 class User(Base):
@@ -16,52 +16,15 @@ class User(Base):
 
     roll = Column(Integer, unique=True, nullable=False, index=True)
 
-    hashed_password = Column(String, nullable=False)
-
-    student = relationship(
-        "Student",
-        back_populates="user",
-        uselist=False,
-        cascade="all, delete"
-    )
-
-
-# ==========================================================
-# STUDENT
-# ==========================================================
-
-class Student(Base):
-
-    __tablename__ = "students"
-
-    id = Column(Integer, primary_key=True, index=True)
-
-    user_id = Column(
-        Integer,
-        ForeignKey("users.id"),
-        unique=True,
-        nullable=False
-    )
-
-    roll = Column(
-        Integer,
-        unique=True,
-        nullable=False,
-        index=True
-    )
-
     name = Column(String, nullable=False)
 
-    email = Column(String, nullable=True)
+    email = Column(String, unique=True, nullable=False)
 
-    branch = Column(String, nullable=True)
+    branch = Column(String, nullable=False)
 
-    semester = Column(Integer, nullable=True)
+    semester = Column(Integer, nullable=False)
 
-    user = relationship(
-        "User",
-        back_populates="student"
-    )
+    password = Column(String, nullable=False)
 
     courses = relationship(
         "Course",
@@ -71,7 +34,7 @@ class Student(Base):
 
 
 # ==========================================================
-# COURSE
+# COURSE MODEL
 # ==========================================================
 
 class Course(Base):
@@ -84,11 +47,11 @@ class Course(Base):
 
     student_id = Column(
         Integer,
-        ForeignKey("students.id"),
+        ForeignKey("users.id"),
         nullable=False
     )
 
     student = relationship(
-        "Student",
+        "User",
         back_populates="courses"
     )

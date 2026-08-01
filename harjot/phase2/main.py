@@ -1,46 +1,55 @@
-from typing import List
+# ==========================================================
+# IMPORTS
+# ==========================================================
 
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+
 from sqlalchemy.orm import Session
 
-import database
 import models
 import schema
 import crud
 
+from database import Base, SessionLocal, engine
 
 # ==========================================================
-# DATABASE INITIALIZATION
+# CREATE DATABASE TABLES
 # ==========================================================
 
-models.Base.metadata.create_all(bind=database.engine)
-
+Base.metadata.create_all(bind=engine)
 
 # ==========================================================
-# FASTAPI APPLICATION
+# FASTAPI APP
 # ==========================================================
 
 app = FastAPI(
+
     title="School Portal API",
-    version="1.0.0",
-    description="Backend API for School Portal"
+
+    version="2.0.0",
+
+    description="Student Management Portal Backend"
+
 )
 
 
 # ==========================================================
-# CORS CONFIGURATION
+# CORS
 # ==========================================================
 
 app.add_middleware(
+
     CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:5500",
-        "http://localhost:5500",
-    ],
+
+    allow_origins=["*"],
+
     allow_credentials=True,
+
     allow_methods=["*"],
-    allow_headers=["*"],
+
+    allow_headers=["*"]
+
 )
 
 
@@ -49,10 +58,15 @@ app.add_middleware(
 # ==========================================================
 
 def get_db():
-    db = database.SessionLocal()
+
+    db = SessionLocal()
+
     try:
+
         yield db
+
     finally:
+
         db.close()
 
 
@@ -61,82 +75,131 @@ def get_db():
 # ==========================================================
 
 @app.get("/")
+
 def root():
+
     return {
-        "status": "success",
-        "message": "School Portal API Running"
+
+        "message": "School Portal Backend Running",
+
+        "version": "2.0"
+
     }
-
-
 # ==========================================================
-# SIGNUP
+# AUTHENTICATION ROUTES
 # ==========================================================
 
 @app.post(
     "/signup",
-    response_model=schema.UserResponse,
-    status_code=status.HTTP_201_CREATED
+    response_model=schema.StudentResponse,
+    status_code=201
 )
 def signup(
-    user: schema.SignupCreate,
+    user: schema.UserSignup,
     db: Session = Depends(get_db)
 ):
-    """
-    Register a new user.
-    """
 
-    existing = crud.get_user_by_roll(
-        db,
-        user.roll
-    )
+    # -------------------------------
+    # Check Roll Number
+    # -------------------------------
 
-    if existing:
+    if crud.roll_exists(db, user.roll):
+
         raise HTTPException(
             status_code=400,
-            detail="Roll number already registered."
+            detail="Roll Number already registered."
         )
 
-    return crud.create_user(
-        db,
-        user
-    )
+    # -------------------------------
+    # Check Email
+    # -------------------------------
+
+    if crud.email_exists(db, user.email):
+
+        raise HTTPException(
+            status_code=400,
+            detail="Email already registered."
+        )
+
+    # -------------------------------
+    # Create Student
+    # -------------------------------
+
+    student = crud.signup(db, user)
+
+    return student
 
 
 # ==========================================================
-# CREATE STUDENT PROFILE
+# LOGIN
 # ==========================================================
 
 @app.post(
-    "/students",
-    response_model=schema.StudentResponse,
-    status_code=status.HTTP_201_CREATED
+    "/login",
+    response_model=schema.LoginResponse
 )
-def create_student(
-    student: schema.StudentCreate,
+def login(
+    credentials: schema.UserLogin,
     db: Session = Depends(get_db)
 ):
-    """
-    Create student profile.
 
-    Roll number must already exist in Users table.
-    """
+    student = crud.login(db, credentials)
 
-    db_student = crud.create_student(
-        db,
-        student
-    )
+    if student is None:
 
-    if db_student is None:
         raise HTTPException(
-            status_code=404,
-            detail="Signup first using this Roll Number."
+            status_code=401,
+            detail="Invalid Roll Number or Password."
         )
 
-    return db_student
+    return {
+
+        "message": "Login Successful",
+
+        "student": student
+
+    }
+# ==========================================================
+# STUDENT ROUTES
+# ==========================================================
+
+@app.get(
+    "/students",
+    response_model=list[schema.StudentResponse]
+)
+def get_students(
+    db: Session = Depends(get_db)
+):
+
+    return crud.get_students(db)
 
 
 # ==========================================================
-# UPDATE STUDENT PROFILE
+
+@app.get(
+    "/students/{roll}",
+    response_model=schema.StudentResponse
+)
+def get_student(
+    roll: int,
+    db: Session = Depends(get_db)
+):
+
+    student = crud.get_student(db, roll)
+
+    if student is None:
+
+        raise HTTPException(
+
+            status_code=404,
+
+            detail="Student not found."
+
+        )
+
+    return student
+
+
 # ==========================================================
 
 @app.put(
@@ -148,90 +211,98 @@ def update_student(
     student: schema.StudentUpdate,
     db: Session = Depends(get_db)
 ):
-    """
-    Update student details.
-    """
 
-    db_student = crud.update_student(
-        db=db,
-        roll=roll,
-        student=student
-    )
+    try:
 
-    if db_student is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Student not found."
+        updated_student = crud.update_student(
+            db,
+            roll,
+            student
         )
 
-    return db_student
+    except ValueError as e:
+
+        raise HTTPException(
+
+            status_code=400,
+
+            detail=str(e)
+
+        )
+
+    if updated_student is None:
+
+        raise HTTPException(
+
+            status_code=404,
+
+            detail="Student not found."
+
+        )
+
+    return updated_student
 
 
 # ==========================================================
-# GET ALL STUDENTS
-# ==========================================================
 
-@app.get(
-    "/students",
-    response_model=List[schema.StudentResponse]
-)
-def get_students(
-    db: Session = Depends(get_db)
-):
-    """
-    Get all student profiles.
-    """
-
-    return crud.get_students(db)
-
-
-# ==========================================================
-# GET SINGLE STUDENT
-# ==========================================================
-
-@app.get(
-    "/students/{roll}",
-    response_model=schema.StudentResponse
-)
-def get_student(
+@app.delete("/students/{roll}")
+def delete_student(
     roll: int,
     db: Session = Depends(get_db)
 ):
-    """
-    Get one student profile.
-    """
 
-    student = crud.get_student(
+    student = crud.delete_student(
         db,
         roll
     )
 
     if student is None:
+
         raise HTTPException(
+
             status_code=404,
+
             detail="Student not found."
+
         )
 
-    return student
+    return {
+
+        "message": "Student deleted successfully."
+
+    }
 
 
 # ==========================================================
-# ADD COURSE
+# DASHBOARD STATISTICS
+# ==========================================================
+
+@app.get("/stats")
+def dashboard_stats(
+    db: Session = Depends(get_db)
+):
+
+    return {
+
+        "students": crud.total_students(db),
+
+        "courses": crud.total_courses(db)
+
+    }
+# ==========================================================
+# COURSE ROUTES
 # ==========================================================
 
 @app.post(
     "/students/{roll}/courses",
     response_model=schema.CourseResponse,
-    status_code=status.HTTP_201_CREATED
+    status_code=201
 )
 def add_course(
     roll: int,
     course: schema.CourseCreate,
     db: Session = Depends(get_db)
 ):
-    """
-    Assign a course to a student.
-    """
 
     db_course = crud.add_course(
         db=db,
@@ -240,68 +311,126 @@ def add_course(
     )
 
     if db_course is None:
+
         raise HTTPException(
+
             status_code=404,
+
             detail="Student not found."
+
         )
 
     return db_course
 
 
 # ==========================================================
-# GET STUDENT COURSES
-# ==========================================================
 
 @app.get(
     "/students/{roll}/courses",
-    response_model=List[schema.CourseResponse]
+    response_model=list[schema.CourseResponse]
 )
-def get_student_courses(
+def get_courses(
     roll: int,
     db: Session = Depends(get_db)
 ):
-    """
-    Get all courses of a student.
-    """
 
-    courses = crud.get_student_courses(
-        db=db,
-        roll=roll
+    courses = crud.get_courses(
+        db,
+        roll
     )
 
     if courses is None:
+
         raise HTTPException(
+
             status_code=404,
+
             detail="Student not found."
+
         )
 
     return courses
 
 
 # ==========================================================
-# DELETE STUDENT
-# ==========================================================
 
-@app.delete("/students/{roll}")
-def delete_student(
-    roll: int,
+@app.put(
+    "/courses/{course_id}",
+    response_model=schema.CourseResponse
+)
+def update_course(
+    course_id: int,
+    course: schema.CourseUpdate,
     db: Session = Depends(get_db)
 ):
-    """
-    Delete a student profile.
-    """
 
-    deleted = crud.delete_student(
+    updated_course = crud.update_course(
+
         db=db,
-        roll=roll
+
+        course_id=course_id,
+
+        course_update=course
+
     )
 
-    if deleted is None:
+    if updated_course is None:
+
         raise HTTPException(
+
             status_code=404,
-            detail="Student not found."
+
+            detail="Course not found."
+
+        )
+
+    return updated_course
+
+
+# ==========================================================
+
+@app.delete("/courses/{course_id}")
+def delete_course(
+    course_id: int,
+    db: Session = Depends(get_db)
+):
+
+    deleted_course = crud.delete_course(
+
+        db,
+
+        course_id
+
+    )
+
+    if deleted_course is None:
+
+        raise HTTPException(
+
+            status_code=404,
+
+            detail="Course not found."
+
         )
 
     return {
-        "message": "Student deleted successfully."
+
+        "message": "Course deleted successfully."
+
+    }
+
+
+# ==========================================================
+# HEALTH CHECK
+# ==========================================================
+
+@app.get("/health")
+def health():
+
+    return {
+
+        "status": "healthy",
+
+        "server": "running"
+
     }

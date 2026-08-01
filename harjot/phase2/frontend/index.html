@@ -11,6 +11,7 @@
     <title>School Portal Dashboard</title>
 
     <!-- Google Font -->
+
     <link rel="preconnect"
           href="https://fonts.googleapis.com">
 
@@ -18,58 +19,115 @@
           href="https://fonts.gstatic.com"
           crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
     <!-- CSS -->
-    <link rel="stylesheet"
-          href="style.css">
+
+    <link
+        rel="stylesheet"
+        href="style.css">
 
 </head>
 
 <body>
 
-<!-- =====================================
-BACKGROUND
-====================================== -->
+<!-- =========================================================
+HEADER
+========================================================= -->
 
-<div class="blob blob1"></div>
-<div class="blob blob2"></div>
-<div class="blob blob3"></div>
+<header>
 
-<div class="grid-bg"></div>
+    <div class="logo">
 
-<!-- =====================================
-MAIN DASHBOARD
-====================================== -->
+        <i class="fa-solid fa-school"></i>
 
-<div class="dashboard">
+        <h2>School Portal</h2>
 
-    <!-- =====================================
-    HEADER
-    ====================================== -->
+    </div>
 
-    <header>
+    <button
+        id="logoutBtn"
+        class="dangerBtn">
 
-        <div class="logo">
+        <i class="fa-solid fa-right-from-bracket"></i>
 
-            <div class="logoBox">
+        Logout
 
-                <i class="fa-solid fa-graduation-cap"></i>
+    </button>
+
+</header>
+
+
+
+<!-- =========================================================
+MAIN CONTAINER
+========================================================= -->
+
+<div class="container">
+
+    <!-- ==========================================
+    WELCOME SECTION
+    =========================================== -->
+
+    <section class="welcomeSection">
+
+        <div>
+
+            <h1>
+
+                Welcome,
+
+                <span id="studentName">
+
+                    Student
+
+                </span>
+
+                👋
+
+            </h1>
+
+            <p>
+
+                Manage your profile, courses and student records.
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==========================================
+    DASHBOARD CARDS
+    =========================================== -->
+
+    <section class="cards">
+
+        <div class="card">
+
+            <div class="cardIcon blue">
+
+                <i class="fa-solid fa-users"></i>
 
             </div>
 
             <div>
 
-                <h1>School Portal</h1>
+                <h3>Total Students</h3>
 
-                <p>
+                <p id="studentCount">
 
-                    Student & Course Management Dashboard
+                    0
 
                 </p>
 
@@ -77,223 +135,23 @@ MAIN DASHBOARD
 
         </div>
 
-        <button
-            id="refreshBtn">
 
-            <i class="fa-solid fa-rotate-right"></i>
-
-            Refresh
-
-        </button>
-
-    </header>
-
-    <!-- =====================================
-    DASHBOARD CARDS
-    ====================================== -->
-
-    <section class="stats">
-
-        <div class="statCard">
-
-            <div class="icon">
-
-                <i class="fa-solid fa-user-graduate"></i>
-
-            </div>
-
-            <div>
-
-                <h3>
-
-                    Total Students
-
-                </h3>
-
-                <span id="studentCount">
-
-                    0
-
-                </span>
-
-            </div>
-
-        </div>
-
-        <div class="statCard">
-
-            <div class="icon">
-
-                <i class="fa-solid fa-book"></i>
-
-            </div>
-
-            <div>
-
-                <h3>
-
-                    Total Courses
-
-                </h3>
-
-                <span id="courseCount">
-
-                    0
-
-                </span>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- =====================================
-    FORMS
-    ====================================== -->
-
-    <section class="forms">
-
-        <!-- ============================
-        ENROLL STUDENT
-        ============================= -->
 
         <div class="card">
 
-            <div class="cardTitle">
-
-                <i class="fa-solid fa-user-plus"></i>
-
-                <h2>
-
-                    Enroll Student
-
-                </h2>
-
-            </div>
-
-            <div class="inputGroup">
-
-                <label>
-
-                    Roll Number
-
-                </label>
-
-                <input
-                    id="roll"
-                    type="number"
-                    placeholder="Enter Roll Number">
-
-            </div>
-
-            <div class="inputGroup">
-
-                <label>
-
-                    Student Name
-
-                </label>
-
-                <input
-                    id="name"
-                    type="text"
-                    placeholder="Enter Student Name">
-
-            </div>
-
-            <button
-                id="addStudentBtn"
-                class="primaryBtn">
-
-                <i class="fa-solid fa-user-plus"></i>
-
-                Enroll Student
-
-            </button>
-
-        </div>
-
-        <!-- ============================
-        ASSIGN COURSE
-        ============================= -->
-
-        <div class="card">
-
-            <div class="cardTitle">
+            <div class="cardIcon green">
 
                 <i class="fa-solid fa-book-open"></i>
 
-                <h2>
-
-                    Assign Course
-
-                </h2>
-
             </div>
-
-            <div class="inputGroup">
-
-                <label>
-
-                    Student Roll
-
-                </label>
-
-                <input
-                    id="courseRoll"
-                    type="number"
-                    placeholder="Enter Student Roll">
-
-            </div>
-
-            <div class="inputGroup">
-
-                <label>
-
-                    Course Title
-
-                </label>
-
-                <input
-                    id="courseTitle"
-                    type="text"
-                    placeholder="Enter Course Name">
-
-            </div>
-
-            <button
-                id="addCourseBtn"
-                class="primaryBtn">
-
-                <i class="fa-solid fa-book-medical"></i>
-
-                Assign Course
-
-            </button>
-
-        </div>
-
-    </section>
-    <!-- =====================================
-    STUDENTS TABLE
-    ====================================== -->
-
-    <section class="tableCard">
-
-        <div class="tableTop">
 
             <div>
 
-                <h2>
+                <h3>Total Courses</h3>
 
-                    Students
+                <p id="courseCount">
 
-                </h2>
-
-                <p>
-
-                    Manage all enrolled students
+                    0
 
                 </p>
 
@@ -301,7 +159,112 @@ MAIN DASHBOARD
 
         </div>
 
-        <div class="tableWrapper">
+    </section>
+
+
+
+    <!-- ==========================================
+    ADD COURSE
+    =========================================== -->
+
+    <section class="section">
+
+        <div class="sectionTitle">
+
+            <i class="fa-solid fa-book"></i>
+
+            <h2>
+
+                Add Course
+
+            </h2>
+
+        </div>
+
+        <form id="courseForm">
+
+            <div class="grid">
+
+                <div class="inputGroup">
+
+                    <label>
+
+                        Roll Number
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="courseRoll"
+                        readonly>
+
+                </div>
+
+                <div class="inputGroup">
+
+                    <label>
+
+                        Course Title
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="course"
+                        placeholder="Enter Course Name"
+                        required>
+
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                class="primaryBtn">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Add Course
+
+            </button>
+
+        </form>
+
+    </section>
+
+        <!-- ==========================================
+    STUDENT RECORDS
+    =========================================== -->
+
+    <section class="section">
+
+        <div class="tableHeader">
+
+            <div class="sectionTitle">
+
+                <i class="fa-solid fa-table"></i>
+
+                <h2>
+
+                    Student Records
+
+                </h2>
+
+            </div>
+
+            <button
+                id="refreshBtn"
+                class="secondaryBtn">
+
+                <i class="fa-solid fa-rotate"></i>
+
+                Refresh
+
+            </button>
+
+        </div>
+
+        <div class="tableContainer">
 
             <table>
 
@@ -309,21 +272,27 @@ MAIN DASHBOARD
 
                     <tr>
 
-                        <th>Student</th>
+                        <th>ID</th>
 
                         <th>Roll</th>
 
+                        <th>Name</th>
+
+                        <th>Email</th>
+
+                        <th>Branch</th>
+
+                        <th>Semester</th>
+
                         <th>Courses</th>
 
-                        <th>Action</th>
+                        <th>Actions</th>
 
                     </tr>
 
                 </thead>
 
-                <tbody id="studentTable">
-
-                    <!-- Filled by JavaScript -->
+                <tbody id="studentTableBody">
 
                 </tbody>
 
@@ -335,21 +304,195 @@ MAIN DASHBOARD
 
 </div>
 
-<!-- =====================================
+
+
+<!-- =========================================================
+EDIT STUDENT MODAL
+========================================================= -->
+
+<div
+    id="editModal"
+    class="modal hidden">
+
+    <div class="modalContent">
+
+        <div class="modalHeader">
+
+            <h2>
+
+                <i class="fa-solid fa-user-pen"></i>
+
+                Update Student
+
+            </h2>
+
+            <button
+                id="closeModal"
+                class="closeBtn">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+        <form id="updateForm">
+
+            <input
+                type="hidden"
+                id="updateRoll">
+
+            <div class="grid">
+
+                <div class="inputGroup">
+
+                    <label>
+
+                        Name
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="updateName"
+                        required>
+
+                </div>
+
+                <div class="inputGroup">
+
+                    <label>
+
+                        Email
+
+                    </label>
+
+                    <input
+                        type="email"
+                        id="updateEmail"
+                        required>
+
+                </div>
+
+                <div class="inputGroup">
+
+                    <label>
+
+                        Branch
+
+                    </label>
+
+                    <select id="updateBranch">
+
+                        <option>CSE</option>
+                        <option>IT</option>
+                        <option>ECE</option>
+                        <option>EEE</option>
+                        <option>Mechanical</option>
+                        <option>Civil</option>
+
+                    </select>
+
+                </div>
+
+                <div class="inputGroup">
+
+                    <label>
+
+                        Semester
+
+                    </label>
+
+                    <select id="updateSemester">
+
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="modalButtons">
+
+                <button
+                    type="submit"
+                    id="updateBtn"
+                    class="primaryBtn">
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+
+                    Save Changes
+
+                </button>
+
+                <button
+                    type="button"
+                    id="cancelBtn"
+                    class="dangerBtn">
+
+                    Cancel
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+EMPTY STATE
+========================================================= -->
+
+<div
+    id="emptyState"
+    class="emptyState hidden">
+
+    <i class="fa-solid fa-user-graduate"></i>
+
+    <h2>
+
+        No Student Records Found
+
+    </h2>
+
+    <p>
+
+        Students will appear here after creating an account.
+
+    </p>
+
+</div>
+
+
+
+<!-- =========================================================
 TOAST
-====================================== -->
+========================================================= -->
 
 <div
     id="toast"
     class="toast">
 
-    Success
-
 </div>
 
-<!-- =====================================
+
+
+<!-- =========================================================
 LOADER
-====================================== -->
+========================================================= -->
 
 <div
     id="loader"
@@ -359,71 +502,14 @@ LOADER
 
 </div>
 
-<!-- =====================================
-DELETE MODAL
-====================================== -->
 
-<div
-    id="modal"
-    class="modal hidden">
 
-    <div class="modalCard">
-
-        <i class="fa-solid fa-triangle-exclamation"></i>
-
-        <h2>
-
-            Delete Student?
-
-        </h2>
-
-        <p>
-
-            This action cannot be undone.
-
-        </p>
-
-        <div class="modalButtons">
-
-            <button id="cancelDelete">
-
-                Cancel
-
-            </button>
-
-            <button id="confirmDelete">
-
-                Delete
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- =====================================
-FOOTER
-====================================== -->
-
-<footer
-    style="
-        text-align:center;
-        padding:30px;
-        color:#6B7280;
-        font-size:14px;
-    ">
-
-    © 2026 School Portal • Student & Course Management System
-
-</footer>
-
-<!-- =====================================
-SCRIPT
-====================================== -->
+<!-- =========================================================
+SCRIPTS
+========================================================= -->
 
 <script src="script.js"></script>
+
 
 </body>
 

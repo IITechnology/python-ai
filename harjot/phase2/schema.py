@@ -1,73 +1,94 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, EmailStr
 
 
 # ==========================================================
-# AUTHENTICATION
+# COURSE SCHEMAS
 # ==========================================================
 
-class SignupCreate(BaseModel):
+class CourseBase(BaseModel):
+    title: str
+
+
+class CourseCreate(CourseBase):
+    pass
+
+
+class CourseUpdate(BaseModel):
+    title: str
+
+
+class CourseResponse(CourseBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+# ==========================================================
+# USER SCHEMAS
+# ==========================================================
+
+class UserSignup(BaseModel):
+
     roll: int
+
+    name: str
+
+    email: EmailStr
+
+    branch: str
+
+    semester: int
+
     password: str
 
 
-class UserResponse(BaseModel):
-    id: int
+class UserLogin(BaseModel):
+
     roll: int
 
-    model_config = ConfigDict(from_attributes=True)
+    password: str
 
-
-# ==========================================================
-# COURSE
-# ==========================================================
-
-class CourseCreate(BaseModel):
-    title: str
-
-
-class CourseResponse(BaseModel):
-    id: int
-    title: str
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-# ==========================================================
-# CREATE STUDENT PROFILE
-# ==========================================================
-
-class StudentCreate(BaseModel):
-    roll: int
-    name: str
-    email: Optional[str] = None
-    branch: Optional[str] = None
-    semester: Optional[int] = None
-
-
-# ==========================================================
-# UPDATE STUDENT PROFILE
-# ==========================================================
 
 class StudentUpdate(BaseModel):
-    email: Optional[str] = None
+
+    name: Optional[str] = None
+
+    email: Optional[EmailStr] = None
+
     branch: Optional[str] = None
+
     semester: Optional[int] = None
 
 
 # ==========================================================
-# STUDENT RESPONSE
+# RESPONSE SCHEMAS
 # ==========================================================
 
 class StudentResponse(BaseModel):
+
     id: int
+
     roll: int
+
     name: str
-    email: Optional[str]
-    branch: Optional[str]
-    semester: Optional[int]
+
+    email: EmailStr
+
+    branch: str
+
+    semester: int
 
     courses: List[CourseResponse] = []
 
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
+
+
+class LoginResponse(BaseModel):
+
+    message: str
+
+    student: StudentResponse
